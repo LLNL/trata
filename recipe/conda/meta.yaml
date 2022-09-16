@@ -1,0 +1,45 @@
+{% set name = "sampling-methods" %}
+{% set version = "1.0" %}
+
+package:
+    name: {{ name }}
+    version: {{ version }}
+
+source:
+    url: https://github.com/LLNL/sampling-methods/archive/v{{ version }}.tar.gz
+    sha256: 
+
+build:
+  number: 0
+  noarch: python
+  script: {{ PYTHON }} -m pip install . -vv
+  entry_points:
+    - sampling_methods = sampling_methods:init
+
+requirements:
+  host:
+    - python
+  run:
+    - python
+    - scikit-learn
+    - scipy
+    - numpy
+
+test:
+  imports:
+    - sampling_methods
+    - sensitivity_methods
+  commands:
+    - pip check
+  requires:
+    - pip
+
+about:
+    home:  https://github.com/LLNL/sampling-methods
+    summary: 
+    license: BSD 3-Clause
+    license_file: LICENSE
+
+extra:
+  maintainers:
+     - eljurf1

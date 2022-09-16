@@ -835,13 +835,13 @@ class CartesianCrossSampler(ContinuousSampler, DiscreteSampler):
         The discrete dimension's values are given through the 'value' keyword.
 
         Example:
-            * sample_points(box=[[0,1],[0,1]], nDiv=3)
+            * sample_points(box=[[0,1],[0,1]], num_divisions=3)
                 - returns 9 points, with 3 divisions in each dimension
 
-            * sample_points(box=[[0,1],[0,1]], nDiv=[3,4])
+            * sample_points(box=[[0,1],[0,1]], num_divisions=[3,4])
                 - returns 12 points, with 3 divisions in the first dimension, and 4 divisions in the second
 
-            * sample_points(box=[[0,1],[0,1]], nDiv=[[.5,.75],[.3,.32]])
+            * sample_points(box=[[0,1],[0,1]], num_divisions=[[.5,.75],[.3,.32]])
                 - returns 4 points, the first dimension having values of .5 and .75, and the second dimension having values of .3 and .32
 
         Args:
@@ -1211,12 +1211,12 @@ class FaceSampler(ContinuousSampler):
             ls_alt_num_div = deepcopy(ls_num_div)
 
             # Replace i-th division in nDim with a list containing the range extent (low or high) in that dimension
-            ls_alt_num_div[i] = [ls_box[i][0]]
+            ls_alt_num_div[i] = ls_box[i][0]  #removed outer brackets
 
             # Then perform cartesian cross sampling with the altered divisions
             ls_points.append(CartesianCrossSampler.sample_points(box=ls_box, num_divisions=ls_alt_num_div))
 
-            ls_alt_num_div[i] = [ls_box[i][1]]
+            ls_alt_num_div[i] = ls_box[i][1]    #removed outer brackets
             ls_points.append(CartesianCrossSampler.sample_points(box=ls_box, num_divisions=ls_alt_num_div))
 
         np_points = np.concatenate(ls_points, axis=0)
