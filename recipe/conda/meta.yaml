@@ -14,7 +14,7 @@ build:
   noarch: python
   script: {{ PYTHON }} -m pip install . -vv
   entry_points:
-    - sampling_methods = sampling_methods:init
+    - sampling-methods = sampling_methods:init
 
 requirements:
   host:
@@ -27,8 +27,8 @@ requirements:
 
 test:
   imports:
-    - sampling_methods
-    - sensitivity_methods
+    - sampling-methods
+    - sensitivity-methods
   commands:
     - pip check
   requires:
