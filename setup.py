@@ -33,7 +33,7 @@ if sha is not None:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(name="sampling_methods",
+setup(name="sampling-methods",
       version=version,
      #version="0.0.1.dev1",
       description=description,
