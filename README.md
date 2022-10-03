@@ -18,7 +18,7 @@ export SAMPLING_METHODS_PATH = sampling-methods                     # `sampling-
 pip install virtualenv                                              # just in case
 python3 -m virtualenv $SAMPLING_METHODS_PATH   
 source ${SAMPLING_METHODS_PATH}/bin/activate
-pip install "numpy>=1.15,<1.19" scikit-learn scipy matplotlib
+pip install "numpy>=1.15,<1.19" scikit-learn scipy matplotlib pytest
 git clone https://github.com/LLNL/sampling-methods
 cd sampling-methods
 pip install .
@@ -38,7 +38,7 @@ pip install .
 ### via pip:
 
 ```bash
-pip install sphinx sphinx_rtd_theme sphinx-autoapi nbsphinx
+pip install sphinx sphinx_rtd_theme sphinx-autoapi nbsphinx 
 ```
 ### via conda:
 
@@ -55,7 +55,7 @@ export SAMPLING_METHODS_PATH = sampling-methods                 # `sampling-meth
 pip install virtualenv                                          # just in case
 python3 -m virtualenv $SAMPLING_METHODS_PATH   
 source ${SAMPLING_METHODS_PATH}/bin/activate
-pip install "numpy>=1.15,<1.19" scikit-learn scipy matplotlib six pip sphinx sphinx_rtd_theme sphinx-autoapi ipython jupyterlab nbsphinx ipywidgets 
+pip install "numpy>=1.15,<1.19" scikit-learn scipy matplotlib six pip pytest sphinx sphinx_rtd_theme sphinx-autoapi ipython jupyterlab nbsphinx ipywidgets 
 git clone https://github.com/LLNL/sampling-methods
 cd sampling-methods
 pip install .
@@ -63,7 +63,7 @@ pip install .
 ### via conda:
 
 ```bash
-conda create -n sampling-methods -c conda-forge "python>=3.6" "numpy>=1.15,<1.19" scikit-learn scipy matplotlib six pip sphinx sphinx_rtd_theme sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets nb_conda nb_conda_kernels 
+conda create -n sampling-methods -c conda-forge "python>=3.6" "numpy>=1.15,<1.19" scikit-learn scipy matplotlib six pip sphinx sphinx_rtd_theme sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets nb_conda nb_conda_kernels pytest
 conda activate sampling-methods
 git clone https://github.com/LLNL/sampling-methods
 cd sampling-methods
