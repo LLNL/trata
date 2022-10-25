@@ -1,6 +1,6 @@
 Adaptive Sampler
 ================
 
-.. automodule:: sampling_methods.adaptive_sampler
+.. automodule:: trata.adaptive_sampler
    :members:
    :private-members:

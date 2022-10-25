@@ -12,7 +12,7 @@ import itertools
 
 import numpy as np
 
-from sampling_methods.sampler import ContinuousSampler, DiscreteSampler, DiscreteOrderedSampler
+from trata.sampler import ContinuousSampler, DiscreteSampler, DiscreteOrderedSampler
 
 
 def parse_file(file_name, file_type='tab'):

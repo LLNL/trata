@@ -6,7 +6,7 @@ import sys
 import pytest
 import os
 import numpy as np
-import sampling_methods.sampler
+import trata.sampler
 
 
 def test_LatinHyperCubeSampler_valid():
@@ -14,7 +14,7 @@ def test_LatinHyperCubeSampler_valid():
     ls_test_box_mixed = [[0.0, 25.0], []]
     ls_test_values_mixed = [[], [1, 2, 3]]
     ls_test_values = [['a', 'b', 'c'], [1, 2, 3]]
-    np_actual_values_std = sampling_methods.sampler.LatinHyperCubeSampler.sample_points(box=ls_test_box,
+    np_actual_values_std = trata.sampler.LatinHyperCubeSampler.sample_points(box=ls_test_box,
                                                                                         num_points=25,
                                                                                         seed=2018)
     ls_expected_values_std = [[4.35852039, -5.08143228, -10.43091164],
@@ -43,7 +43,7 @@ def test_LatinHyperCubeSampler_valid():
                               [2.36364119, -10.91427125, -20.96794990],
                               [6.29954539, -21.59838791, -17.91665014]]
     np.testing.assert_array_almost_equal(np_actual_values_std, ls_expected_values_std)
-    np_actual_values_geo = sampling_methods.sampler.LatinHyperCubeSampler.sample_points(box=ls_test_box,
+    np_actual_values_geo = trata.sampler.LatinHyperCubeSampler.sample_points(box=ls_test_box,
                                                                                         num_points=25,
                                                                                         geo_degree=1.2,
                                                                                         seed=2018)
@@ -73,7 +73,7 @@ def test_LatinHyperCubeSampler_valid():
                               [1.21711691, -9.25769661, -22.97401955],
                               [4.04396729, -23.14706354, -21.11128515]]
     np.testing.assert_array_almost_equal(np_actual_values_geo, ls_expected_values_geo)
-    np_actual_values_mixed = sampling_methods.sampler.LatinHyperCubeSampler.sample_points(box=ls_test_box_mixed,
+    np_actual_values_mixed = trata.sampler.LatinHyperCubeSampler.sample_points(box=ls_test_box_mixed,
                                                                                           values=ls_test_values_mixed,
                                                                                           num_points=5,
                                                                                           seed=2018)
@@ -83,7 +83,7 @@ def test_LatinHyperCubeSampler_valid():
                                 [22.94992696, 1],
                                 [14.18555550, 1]]
     np.testing.assert_array_almost_equal(np_actual_values_mixed, ls_expected_values_mixed)
-    np_actual_values_discrete = sampling_methods.sampler.LatinHyperCubeSampler.sample_points(values=ls_test_values,
+    np_actual_values_discrete = trata.sampler.LatinHyperCubeSampler.sample_points(values=ls_test_values,
                                                                                              num_points=5,
                                                                                              seed=2018)
     np_expected_values_discrete = np.array([['a', 2],
@@ -95,52 +95,52 @@ def test_LatinHyperCubeSampler_valid():
 
 def test_LatinHyperCubeSampler_invalid():
     # nPts not given
-    pytest.raises(TypeError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]])
 
     # neither box nor values given
-    pytest.raises(TypeError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       num_points=10)
 
     # nPts nor box not given
-    pytest.raises(TypeError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.LatinHyperCubeSampler.sample_points)
 
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=[0.0, 1.0],
                       num_points=10)
 
     # too many dimensions in nPts
-    pytest.raises(TypeError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=[1, 2])
     # nPts type str
-    pytest.raises(ValueError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points='f')
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=1.0,
                       num_points=10)
     # too many dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       num_points=10)
     # geo_degree too low
-    pytest.raises(ValueError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=10,
                       geo_degree=-1.0)
 
     # geo_degree too high
-    pytest.raises(ValueError, sampling_methods.sampler.LatinHyperCubeSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.LatinHyperCubeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=10,
                       geo_degree=3.0)
 
 def test_MonteCarloSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values = sampling_methods.sampler.MonteCarloSampler.sample_points(box=ls_test_box,
+    np_actual_values = trata.sampler.MonteCarloSampler.sample_points(box=ls_test_box,
                                                                                 num_points=25,
                                                                                 seed=2018)
     ls_expected_values = [[22.05873279, -20.98472622, 18.71205141],
@@ -172,48 +172,48 @@ def test_MonteCarloSampler_valid():
 
 def test_MonteCarloSampler_invalid():
     # nPts not given
-    pytest.raises(TypeError, sampling_methods.sampler.MonteCarloSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.MonteCarloSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]])
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.MonteCarloSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.MonteCarloSampler.sample_points,
                       num_points=10)
     # nPts nor box not given
-    pytest.raises(TypeError, sampling_methods.sampler.MonteCarloSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.MonteCarloSampler.sample_points)
 
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.MonteCarloSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.MonteCarloSampler.sample_points,
                       box=[0.0, 1.0],
                       num_points=10)
 
     # too many dimensions in nPts
-    pytest.raises(TypeError, sampling_methods.sampler.MonteCarloSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.MonteCarloSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=[1, 2])
 
     # nPts type str
-    pytest.raises(ValueError, sampling_methods.sampler.MonteCarloSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.MonteCarloSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points='f')
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.MonteCarloSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.MonteCarloSampler.sample_points,
                       box=1.0,
                       num_points=10)
 
     # too many dimensions in box
-    pytest.raises(ValueError, sampling_methods.sampler.MonteCarloSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.MonteCarloSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       num_points=10)
 
 def test_QuasiRandomNumberSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values_sobol = sampling_methods.sampler.QuasiRandomNumberSampler.sample_points(box=ls_test_box,
+    np_actual_values_sobol = trata.sampler.QuasiRandomNumberSampler.sample_points(box=ls_test_box,
                                                                                              num_points=3,
                                                                                              technique='Sobol')
     ls_expected_values_sobol = [[12.50, -12.50, 0.0],
                                 [18.75, -18.75, 12.5],
                                 [6.25, -6.25, -12.5]]
     np.testing.assert_array_equal(np_actual_values_sobol, ls_expected_values_sobol)
-    np_actual_values_sobol = sampling_methods.sampler.QuasiRandomNumberSampler.sample_points(box=ls_test_box,
+    np_actual_values_sobol = trata.sampler.QuasiRandomNumberSampler.sample_points(box=ls_test_box,
                                                                                              num_points=3,
                                                                                              technique='Halton')
     ls_expected_values_halton = [[6.250, -8.33333333, -5.],
@@ -223,44 +223,44 @@ def test_QuasiRandomNumberSampler_valid():
 
 def test_QuasiRandomNumberSampler_invalid():
     # nPts not given
-    pytest.raises(TypeError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]])
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       num_points=10)
     # nPts nor box not given
-    pytest.raises(TypeError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points)
 
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=[0.0, 1.0],
                       num_points=10)
 
     # too many dimensions in nPts
-    pytest.raises(TypeError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=[1, 2])
     # nPts type str
-    pytest.raises(ValueError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points='f')
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=1.0,
                       num_points=10)
 
     # too many dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       num_points=10)
     # invalid sequence type
-    pytest.raises(ValueError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=10,
                       technique='foobar')
 
     # at_most type str
-    pytest.raises(ValueError, sampling_methods.sampler.QuasiRandomNumberSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.QuasiRandomNumberSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=10,
                       technique='halton',
@@ -268,7 +268,7 @@ def test_QuasiRandomNumberSampler_invalid():
 
 def test_CenteredSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values = sampling_methods.sampler.CenteredSampler.sample_points(box=ls_test_box,
+    np_actual_values = trata.sampler.CenteredSampler.sample_points(box=ls_test_box,
                                                                               num_divisions=[3, 5, 6],
                                                                               default=[1, 2, 3])
     np_expected_values = [[0., 2., 3.],
@@ -289,62 +289,62 @@ def test_CenteredSampler_valid():
 
 def test_CenteredSampler_invalid():
     # nDiv not given
-    pytest.raises(TypeError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CenteredSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       default=[1, 2])
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CenteredSampler.sample_points,
                       num_divisions=10,
                       default=[1, 2])
     # default not given
-    pytest.raises(ValueError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.CenteredSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_divisions=10)
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CenteredSampler.sample_points,
                       box=[0.0, 1.0],
                       num_divisions=10,
                       default=[1, 2])
     # nDiv type str
-    pytest.raises(TypeError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CenteredSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_divisions='ff',
                       default=[1, 2])
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CenteredSampler.sample_points,
                       box=1.0,
                       num_divisions=10,
                       default=[1, 2])
     # too many dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CenteredSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       num_divisions=10,
                       dim_indices=[1],
                       default=[1, 2])
     # default length less than number of dimensions in box
-    pytest.raises(ValueError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.CenteredSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_divisions=10,
                       default=[2])
     # default length more than number of dimensions in box
-    pytest.raises(ValueError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.CenteredSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_divisions=10,
                       default=[1, 2, 3])
     # default type str
-    pytest.raises(ValueError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.CenteredSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_divisions=10,
                       default="ab")
     # default type int
-    pytest.raises(TypeError, sampling_methods.sampler.CenteredSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CenteredSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_divisions=10,
                       default=2)
 
 def test_OneAtATimeSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values = sampling_methods.sampler.OneAtATimeSampler.sample_points(box=ls_test_box,
+    np_actual_values = trata.sampler.OneAtATimeSampler.sample_points(box=ls_test_box,
                                                                                 default=[1, 2, 3],
                                                                                 do_oat=True,
                                                                                 use_low=True,
@@ -363,37 +363,37 @@ def test_OneAtATimeSampler_valid():
 
 def test_OneAtATimeSampler_invalid():
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.OneAtATimeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.OneAtATimeSampler.sample_points,
                       default=[1, 2])
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.OneAtATimeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.OneAtATimeSampler.sample_points,
                       box=[0.0, 1.0],
                       default=[1, 2],
                       do_oat=True)
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.OneAtATimeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.OneAtATimeSampler.sample_points,
                       box=1.0,
                       default=[1, 2],
                       do_oat=True)
     # too many dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.OneAtATimeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.OneAtATimeSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       default=[1, 2],
                       do_oat=True)
     # default length less than number of dimensions in box
-    pytest.raises(IndexError, sampling_methods.sampler.OneAtATimeSampler.sample_points,
+    pytest.raises(IndexError, trata.sampler.OneAtATimeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       default=[2],
                       use_default=True)
     # default type int
-    pytest.raises(TypeError, sampling_methods.sampler.OneAtATimeSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.OneAtATimeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       default=2,
                       use_default=True)
                       
 def test_DefaultValueSampler_valid():
     ls_test_default = [-1, 0, 2, np.pi]
-    np_actual_values = sampling_methods.sampler.DefaultValueSampler.sample_points(num_points=2,
+    np_actual_values = trata.sampler.DefaultValueSampler.sample_points(num_points=2,
                                                                                   default=ls_test_default)
     ls_expected_values = [[-1., 0., 2., np.pi],
                           [-1., 0., 2., np.pi]]
@@ -401,13 +401,13 @@ def test_DefaultValueSampler_valid():
 
 def test_DefaultValueSampler_invalid():
     # nPts not given
-    pytest.raises(TypeError, sampling_methods.sampler.DefaultValueSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.DefaultValueSampler.sample_points,
                       default=[1, 2, 3])
     # default not given
-    pytest.raises(TypeError, sampling_methods.sampler.DefaultValueSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.DefaultValueSampler.sample_points,
                       num_points=5)
     # default and box not same dimension
-    pytest.raises(ValueError, sampling_methods.sampler.DefaultValueSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.DefaultValueSampler.sample_points,
                       num_points=5,
                       default=[1, 2, 3],
                       box=[[0, 1], [0, 1]])
@@ -417,7 +417,7 @@ def test_CornerSampler_valid():
     ls_test_box_mixed = [[0.0, 25.0], []]
     ls_test_values_mixed = [[], [1, 2, 3]]
     ls_test_values = [['a', 'b', 'c'], [1, 2, 3]]
-    np_actual_values = sampling_methods.sampler.CornerSampler.sample_points(box=ls_test_box,
+    np_actual_values = trata.sampler.CornerSampler.sample_points(box=ls_test_box,
                                                                             num_points=9)
     ls_expected_values = [[0., -25., -25.],
                           [0., -25., 25.],
@@ -429,14 +429,14 @@ def test_CornerSampler_valid():
                           [25., 0., 25.],
                           [0., -25., -25.]]
     np.testing.assert_array_equal(np_actual_values, ls_expected_values)
-    np_actual_values_mixed = sampling_methods.sampler.CornerSampler.sample_points(box=ls_test_box_mixed,
+    np_actual_values_mixed = trata.sampler.CornerSampler.sample_points(box=ls_test_box_mixed,
                                                                                   values=ls_test_values_mixed)
     ls_expected_values_mixed = [[0., 1],
                                 [0., 3],
                                 [25., 1],
                                 [25., 3]]
     np.testing.assert_array_equal(np_actual_values_mixed, ls_expected_values_mixed)
-    np_actual_values_discrete = sampling_methods.sampler.CornerSampler.sample_points(values=ls_test_values,
+    np_actual_values_discrete = trata.sampler.CornerSampler.sample_points(values=ls_test_values,
                                                                                      num_points=9)
     np_expected_values_discrete = np.array([['a', 1],
                                             ['a', 3],
@@ -451,30 +451,30 @@ def test_CornerSampler_valid():
 
 def test_CornerSampler_invalid():
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.CornerSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CornerSampler.sample_points,
                       num_points=10)
     # values nor box not given
-    pytest.raises(TypeError, sampling_methods.sampler.CornerSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.CornerSampler.sample_points)
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.CornerSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CornerSampler.sample_points,
                       box=[0.0, 1.0],
                       num_points=10)
     # too many dimensions in nPts
-    pytest.raises(TypeError, sampling_methods.sampler.CornerSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CornerSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=[1, 2])
     # nPts type str
-    pytest.raises(ValueError, sampling_methods.sampler.CornerSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.CornerSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points='f')
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.CornerSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CornerSampler.sample_points,
                       box=1.0,
                       num_points=10)
 
 def test_UniformSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values = sampling_methods.sampler.UniformSampler.sample_points(box=ls_test_box,
+    np_actual_values = trata.sampler.UniformSampler.sample_points(box=ls_test_box,
                                                                              num_points=6)
     ls_expected_values = [[0., -25., -25.],
                           [5., -20., -15.],
@@ -483,7 +483,7 @@ def test_UniformSampler_valid():
                           [20., -5., 15.],
                           [25., 0., 25.]]
     np.testing.assert_array_equal(np_actual_values, ls_expected_values)
-    np_actual_values_equal_area = sampling_methods.sampler.UniformSampler.sample_points(box=ls_test_box,
+    np_actual_values_equal_area = trata.sampler.UniformSampler.sample_points(box=ls_test_box,
                                                                                         num_points=5,
                                                                                         equal_area_divs=True)
     ls_expected_values_equal_area = [[2.5, -22.5, -20.],
@@ -495,33 +495,33 @@ def test_UniformSampler_valid():
 
 def test_UniformSampler_invalid():
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.UniformSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.UniformSampler.sample_points,
                       num_points=10)
     # nDiv not given
-    pytest.raises(TypeError, sampling_methods.sampler.UniformSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.UniformSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]])
     # nDiv nor box not given
-    pytest.raises(TypeError, sampling_methods.sampler.UniformSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.UniformSampler.sample_points)
     # not enough dimensions in box
-    pytest.raises(ValueError, sampling_methods.sampler.UniformSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.UniformSampler.sample_points,
                       box=[0.0, 1.0],
                       num_points=10)
     # box not list
-    pytest.raises(ValueError, sampling_methods.sampler.UniformSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.UniformSampler.sample_points,
                       box=1.0,
                       num_points=10)
     # too many dimensions in box
-    pytest.raises(ValueError, sampling_methods.sampler.UniformSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.UniformSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       num_points=10)
     # too many dimensions in nDiv
-    pytest.raises(TypeError, sampling_methods.sampler.UniformSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.UniformSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       num_points=[1, 2])
 
 def test_CartesianCrossSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values = sampling_methods.sampler.CartesianCrossSampler.sample_points(box=ls_test_box,
+    np_actual_values = trata.sampler.CartesianCrossSampler.sample_points(box=ls_test_box,
                                                                                     num_divisions=3)
     ls_expected_values = [[0.0, -25.0, -25.],
                           [0.0, -25.0, 0.],
@@ -551,7 +551,7 @@ def test_CartesianCrossSampler_valid():
                           [25.0, 0.0, 0.],
                           [25.0, 0.0, 25.]]
     np.testing.assert_array_equal(np_actual_values, ls_expected_values)
-    np_actual_values_equal_area = sampling_methods.sampler.CartesianCrossSampler.sample_points(box=ls_test_box,
+    np_actual_values_equal_area = trata.sampler.CartesianCrossSampler.sample_points(box=ls_test_box,
                                                                                                num_divisions=2,
                                                                                                equal_area_divs=True)
     ls_expected_values_equal_area = [[6.25, -18.75, -12.5],
@@ -565,7 +565,7 @@ def test_CartesianCrossSampler_valid():
     np.testing.assert_array_equal(np_actual_values_equal_area, ls_expected_values_equal_area)
     ls_test_box_mixed = [[0.0, 25.0], []]
     ls_test_values_mixed = [[], [1, 2, 3]]
-    np_actual_values_mixed = sampling_methods.sampler.CartesianCrossSampler.sample_points(box=ls_test_box_mixed,
+    np_actual_values_mixed = trata.sampler.CartesianCrossSampler.sample_points(box=ls_test_box_mixed,
                                                                                           values=ls_test_values_mixed,
                                                                                           num_divisions=3)
     ls_expected_values_mixed = [[0.0, 1],
@@ -579,7 +579,7 @@ def test_CartesianCrossSampler_valid():
                                 [25.0, 3]]
     np.testing.assert_array_equal(np_actual_values_mixed, ls_expected_values_mixed)
     ls_test_values = [['a', 'b', 'c'], [1, 2, 3]]
-    np_actual_values_discrete = sampling_methods.sampler.CartesianCrossSampler.sample_points(num_divisions=3,
+    np_actual_values_discrete = trata.sampler.CartesianCrossSampler.sample_points(num_divisions=3,
                                                                                              values=ls_test_values)
     np_expected_values_discrete = np.array([['a', 1],
                                             ['a', 2],
@@ -594,55 +594,55 @@ def test_CartesianCrossSampler_valid():
 
 def test_CartesianCrossSampler_invalid():
     # box or value not given
-    pytest.raises(TypeError, sampling_methods.sampler.CartesianCrossSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CartesianCrossSampler.sample_points,
                       num_divisions=10)
     # num_divisions not given
-    pytest.raises(TypeError, sampling_methods.sampler.CartesianCrossSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CartesianCrossSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]])
     # num_divisions, box, nor values not given
-    pytest.raises(TypeError, sampling_methods.sampler.CartesianCrossSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.CartesianCrossSampler.sample_points)
     # not enough dimensions in box
-    pytest.raises(IndexError, sampling_methods.sampler.CartesianCrossSampler.sample_points,
+    pytest.raises(IndexError, trata.sampler.CartesianCrossSampler.sample_points,
                       box=[0.0, 1.0],
                       num_divisions=10)
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.CartesianCrossSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CartesianCrossSampler.sample_points,
                       box=1.0,
                       num_divisions=10)
     # too many dimensions in box
-    pytest.raises(ValueError, sampling_methods.sampler.CartesianCrossSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.CartesianCrossSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       num_divisions=10)
 
 def test_SamplePointsSampler_valid():
     ls_test_input = [(1, 2.3), (2, 3.4)]
-    np_actual_values = sampling_methods.sampler.SamplePointsSampler.sample_points(samples=ls_test_input)
+    np_actual_values = trata.sampler.SamplePointsSampler.sample_points(samples=ls_test_input)
     np.testing.assert_array_equal(np_actual_values, ls_test_input)
 
 def test_SamplePointsSampler_invalid():
     # samples not given
-    pytest.raises(TypeError, sampling_methods.sampler.SamplePointsSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points)
     # not enough dimensions in  samples
-    pytest.raises(np.AxisError, sampling_methods.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(np.AxisError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=[0.0, 1.0])
     # too many dimensions in samples
-    pytest.raises(TypeError, sampling_methods.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]])
     # samples not list
-    pytest.raises(np.AxisError, sampling_methods.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(np.AxisError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=1)
     # samples list of strings
-    pytest.raises(ValueError, sampling_methods.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=["foo", "bar"])
     # sample with incorrect size
-    pytest.raises(ValueError, sampling_methods.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=[[0.0, 1.0], [0.0, 1.0], [0.0, 1.0, 2.0]])
 
 def test_RejectionSampler_valid():
     ls_test_box = [[-5., 5.0], [-5.0, 5.0], [-5.0, 5.0]]
     def func(x):
         return np.exp(np.sum(-np.power(x, 2.) / 2.))
-    np_actual_values_rejection = sampling_methods.sampler.RejectionSampler.sample_points(num_points=25,
+    np_actual_values_rejection = trata.sampler.RejectionSampler.sample_points(num_points=25,
                                                                                          box=ls_test_box,
                                                                                          func=func,
                                                                                          seed=2018)
@@ -672,7 +672,7 @@ def test_RejectionSampler_valid():
                                     [-0.59862535, 0.95229270, -1.75587455],
                                     [-0.27850650, -0.30791447, -1.07258371]]
     np.testing.assert_array_almost_equal(np_actual_values_rejection, np_expected_values_rejection)
-    np_actual_values_metropolis = sampling_methods.sampler.RejectionSampler.sample_points(num_points=25,
+    np_actual_values_metropolis = trata.sampler.RejectionSampler.sample_points(num_points=25,
                                                                                           box=ls_test_box,
                                                                                           func=func,
                                                                                           seed=2018,
@@ -710,57 +710,57 @@ def test_RejectionSampler_invalid():
     def func(x):
         return np.exp(np.sum(-np.power(x, 2.) / 2.))
     # no parameters given
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points)
     # nPts not given
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       box=ls_test_box,
                       func=func)
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       func=func)
     # func not given
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=ls_test_box)
     # too many dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=[[[-5., 5.0], [-5.0, 5.0], [-5.0, 5.0]],
                            [[-5., 5.0], [-5.0, 5.0], [-5.0, 5.0]],
                            [[-5., 5.0], [-5.0, 5.0], [-5.0, 5.0]]],
                       func=func)
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=[-5., 5.],
                       func=func)
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=1,
                       func=func)
     # func not function
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=ls_test_box,
                       func="foo")
     # func does not return scalar
-    pytest.raises(ValueError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=ls_test_box,
                       func=lambda x: np.exp(-np.power(x, 2.) / 2.))
-    pytest.raises(ValueError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=ls_test_box,
                       func=lambda x: np.exp(-np.power(x, 2.) / 2.),
                       metropolis=True)
     # func returns string
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=ls_test_box,
                       func=lambda x: "bar")
-    pytest.raises(TypeError, sampling_methods.sampler.RejectionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.RejectionSampler.sample_points,
                       num_points=25,
                       box=ls_test_box,
                       func=lambda x: "bar",
@@ -768,7 +768,7 @@ def test_RejectionSampler_invalid():
 
 def test_ProbabilityDensityFunctionSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values_normal1 = sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points(
+    np_actual_values_normal1 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
         num_points=25,
         box=ls_test_box,
         dist='norm',
@@ -776,7 +776,7 @@ def test_ProbabilityDensityFunctionSampler_valid():
         loc=[0, 1, 2],
         scale=[1, 2,
                3])
-    np_actual_values_normal2 = sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points(
+    np_actual_values_normal2 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
         num_points=25,
         num_dim=3,
         dist='norm',
@@ -812,14 +812,14 @@ def test_ProbabilityDensityFunctionSampler_valid():
     np.testing.assert_array_almost_equal(np_actual_values_normal1, np_actual_values_normal2)
     np.testing.assert_array_almost_equal(np_actual_values_normal1, np_expected_values_normal)
     np.testing.assert_array_almost_equal(np_actual_values_normal2, np_expected_values_normal)
-    np_actual_values_t1 = sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=25,
+    np_actual_values_t1 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=25,
                                                                                                    box=ls_test_box,
                                                                                                    dist='t',
                                                                                                    df=[1, 1, 1],
                                                                                                    seed=2018,
                                                                                                    loc=[0, 1, 2],
                                                                                                    scale=[1, 2, 3])
-    np_actual_values_t2 = sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=25,
+    np_actual_values_t2 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=25,
                                                                                                    num_dim=3,
                                                                                                    dist='t',
                                                                                                    df=[1, 1, 1],
@@ -854,7 +854,7 @@ def test_ProbabilityDensityFunctionSampler_valid():
     np.testing.assert_array_almost_equal(np_actual_values_t1, np_actual_values_t2)
     np.testing.assert_array_almost_equal(np_actual_values_t1, np_expected_values_t)
     np.testing.assert_array_almost_equal(np_actual_values_t2, np_expected_values_t)
-    np_actual_values_lognormal1 = sampling_methods.sampler. \
+    np_actual_values_lognormal1 = trata.sampler. \
         ProbabilityDensityFunctionSampler.sample_points(num_points=25,
                                                         box=ls_test_box,
                                                         dist='lognorm',
@@ -862,7 +862,7 @@ def test_ProbabilityDensityFunctionSampler_valid():
                                                         seed=2018,
                                                         loc=[0, 1, 2],
                                                         scale=[1, 2, 3])
-    np_actual_values_lognormal2 = sampling_methods.sampler. \
+    np_actual_values_lognormal2 = trata.sampler. \
         ProbabilityDensityFunctionSampler.sample_points(num_points=25,
                                                         num_dim=3,
                                                         dist='lognorm',
@@ -906,94 +906,94 @@ def test_ProbabilityDensityFunctionSampler_valid():
 @pytest.mark.skipif(sys.version_info[0] < 3, reason="Not supported for Python 2")
 def test_ProbabilityDensityFunctionSampler_invalid():
     # no parameters given
-    pytest.raises(TypeError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points)
     # nPts not given
-    pytest.raises(TypeError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_dim=3,
                       dist='norm')
     # nDim or box not given
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       dist='norm')
     # dist not given
-    pytest.raises(TypeError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3)
     # loc too short
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='norm',
                       loc=[1, 2])
     # loc too long
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='norm',
                       loc=[1, 2, 3, 4])
     # loc wrong type
-    pytest.raises(TypeError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='norm',
                       loc="foo")
     # scale too short
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='norm',
                       scale=[1, 2])
     # scale too long
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='norm',
                       scale=[1, 2, 3, 4])
     # scale wrong type
-    pytest.raises(TypeError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='norm',
                       scale="foo")
     # df too short
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='t',
                       df=[1, 2])
     # df too long
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='t',
                       df=[1, 2, 3, 4])
     # df wrong type
-    pytest.raises(TypeError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='t',
                       df="foo")
     # s too short
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='lognorm',
                       s=[1, 2])
     # s too long
-    pytest.raises(ValueError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='lognorm',
                       s=[1, 2, 3, 4])
     # s wrong type
-    pytest.raises(TypeError, sampling_methods.sampler.ProbabilityDensityFunctionSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
                       num_points=25,
                       num_dim=3,
                       dist='lognorm',
                       s="foo")
 
 def test_MultiNormalSampler_valid():
-    np_actual_values = sampling_methods.sampler.MultiNormalSampler.sample_points(num_points=25,
+    np_actual_values = trata.sampler.MultiNormalSampler.sample_points(num_points=25,
                                                                                  mean=[1.0, 2.0, 3.0],
                                                                                  covariance=[[1.0, 0.5, 0.1],
                                                                                              [0.5, 1.0, 0.5],
@@ -1028,29 +1028,29 @@ def test_MultiNormalSampler_valid():
 
 def test_MultiNormalSampler_invalid():
     # no parameters given
-    pytest.raises(TypeError, sampling_methods.sampler.MultiNormalSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.MultiNormalSampler.sample_points)
     # nPts not given
-    pytest.raises(TypeError, sampling_methods.sampler.MultiNormalSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.MultiNormalSampler.sample_points,
                       mean=[1.0, 2.0, 3.0],
                       covariance=[[1.0, 0.5, 0.1],
                                   [0.5, 1.0, 0.5],
                                   [0.1, 0.5, 1.0]])
     # mean and covariance different lengths
-    pytest.raises(ValueError, sampling_methods.sampler.MultiNormalSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.MultiNormalSampler.sample_points,
                       num_points=25,
                       mean=[1.0, 2.0],
                       covariance=[[1.0, 0.5, 0.1],
                                   [0.5, 1.0, 0.5],
                                   [0.1, 0.5, 1.0]])
     # mean not list
-    pytest.raises(ValueError, sampling_methods.sampler.MultiNormalSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.MultiNormalSampler.sample_points,
                       num_points=25,
                       mean=1.0,
                       covariance=[[1.0, 0.5, 0.1],
                                   [0.5, 1.0, 0.5],
                                   [0.1, 0.5, 1.0]])
     # mean nested list
-    pytest.raises(ValueError, sampling_methods.sampler.MultiNormalSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.MultiNormalSampler.sample_points,
                       num_points=25,
                       mean=[[1.0, 0.5, 0.1],
                             [0.5, 1.0, 0.5],
@@ -1059,7 +1059,7 @@ def test_MultiNormalSampler_invalid():
                                   [0.5, 1.0, 0.5],
                                   [0.1, 0.5, 1.0]])
     # covariance double nested list
-    pytest.raises(ValueError, sampling_methods.sampler.MultiNormalSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.MultiNormalSampler.sample_points,
                       num_points=25,
                       mean=[1.0, 2.0, 3.0],
                       covariance=[[[1.0, 0.5, 0.1],
@@ -1072,7 +1072,7 @@ def test_MultiNormalSampler_invalid():
                                    [0.5, 1.0, 0.5],
                                    [0.1, 0.5, 1.0]]])
     # covariance not positive semi-definite
-    pytest.raises(ValueError, sampling_methods.sampler.MultiNormalSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.MultiNormalSampler.sample_points,
                       num_points=25,
                       mean=[1.0, 2.0, 3.0],
                       covariance=[[-1.0, 0.5, 0.1],
@@ -1080,7 +1080,7 @@ def test_MultiNormalSampler_invalid():
                                   [0.1, 0.5, 1.0]])
     if sys.version_info[0] >= 3:
         # covariance not symmetric
-        pytest.warns(RuntimeWarning, sampling_methods.sampler.MultiNormalSampler.sample_points,
+        pytest.warns(RuntimeWarning, trata.sampler.MultiNormalSampler.sample_points,
                          num_points=25,
                          mean=[1.0, 2.0, 3.0],
                          covariance=[[1.0, 0.5, 0.8],
@@ -1090,7 +1090,7 @@ def test_MultiNormalSampler_invalid():
 @pytest.mark.xfail
 def test_FaceSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values = sampling_methods.sampler.FaceSampler.sample_points(box=ls_test_box,
+    np_actual_values = trata.sampler.FaceSampler.sample_points(box=ls_test_box,
                                                                           num_divisions=3)
     ls_expected_values = [[0.0, -25.0, -25.0],
                           [0.0, -25.0, 0.0],
@@ -1119,7 +1119,7 @@ def test_FaceSampler_valid():
                           [25.0, 0.0, 0.0],
                           [25.0, 0.0, 25.0]]
     np.testing.assert_array_equal(np_actual_values, ls_expected_values)
-    np_actual_values_equal_area = sampling_methods.sampler.FaceSampler.sample_points(box=ls_test_box,
+    np_actual_values_equal_area = trata.sampler.FaceSampler.sample_points(box=ls_test_box,
                                                                                      num_divisions=2,
                                                                                      equal_area_divs=True)
     ls_expected_values_equal_area = [[0., -25., -25.],
@@ -1134,29 +1134,29 @@ def test_FaceSampler_valid():
 
 def test_FaceSampler_invalid():
     # box not given
-    pytest.raises(TypeError, sampling_methods.sampler.FaceSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.FaceSampler.sample_points,
                       num_divisions=10)
     # nDiv not given
-    pytest.raises(TypeError, sampling_methods.sampler.FaceSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.FaceSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]])
     # nDiv nor box not given
-    pytest.raises(TypeError, sampling_methods.sampler.FaceSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.FaceSampler.sample_points)
     # not enough dimensions in box
-    pytest.raises(TypeError, sampling_methods.sampler.FaceSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.FaceSampler.sample_points,
                       box=[0.0, 1.0],
                       num_divisions=10)
     # box not list
-    pytest.raises(TypeError, sampling_methods.sampler.FaceSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.FaceSampler.sample_points,
                       box=1.0,
                       num_divisions=10)
     # too many dimensions in box
-    pytest.raises(ValueError, sampling_methods.sampler.FaceSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.FaceSampler.sample_points,
                       box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
                       num_divisions=10)
 
 def test_UserValueSampler_valid():
     points1_tab = os.path.join(os.path.dirname(__file__), "points1.tab")
-    np_actual_values1 = sampling_methods.sampler.UserValueSampler.sample_points(user_samples_file=points1_tab)
+    np_actual_values1 = trata.sampler.UserValueSampler.sample_points(user_samples_file=points1_tab)
     ls_expected_values1 = [[1.0, 1.0, 1.0],
                            [0.2, 3.0, 4.0],
                            [5.0, 0.6, 7.0],
@@ -1165,7 +1165,7 @@ def test_UserValueSampler_valid():
     np.testing.assert_array_equal(np_actual_values1, ls_expected_values1)
     assert np_actual_values1.dtype==float
     points2_tab = os.path.join(os.path.dirname(__file__), "points2.tab")
-    np_actual_values2 = sampling_methods.sampler.UserValueSampler.sample_points(user_samples_file=points2_tab)
+    np_actual_values2 = trata.sampler.UserValueSampler.sample_points(user_samples_file=points2_tab)
     ls_expected_values2 = [['1.0', '1.0', '1.0'],
                            ['.2', '3.0', '4.0'],
                            ['5.0', '.6', '7.0'],
@@ -1176,10 +1176,10 @@ def test_UserValueSampler_valid():
 
 def test_UserValueSampler_invalid():
     # user_samples_file not given
-    pytest.raises(TypeError, sampling_methods.sampler.UserValueSampler.sample_points)
+    pytest.raises(TypeError, trata.sampler.UserValueSampler.sample_points)
     # user_samples_file not string
-    pytest.raises(RuntimeError, sampling_methods.sampler.UserValueSampler.sample_points,
+    pytest.raises(RuntimeError, trata.sampler.UserValueSampler.sample_points,
                       user_samples_file=123)
     # user_samples_file points to invalid file
-    pytest.raises(RuntimeError, sampling_methods.sampler.UserValueSampler.sample_points,
+    pytest.raises(RuntimeError, trata.sampler.UserValueSampler.sample_points,
                       user_samples_file="points3.tab")

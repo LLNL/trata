@@ -1,20 +1,20 @@
-{% set name = "sampling-methods" %}
-{% set version = "1.0" %}
+{% set name = "trata" %}
+{% set version = "1.0.0" %}
 
 package:
     name: {{ name }}
     version: {{ version }}
 
 source:
-    url: https://github.com/LLNL/sampling-methods/archive/v{{ version }}.tar.gz
-    sha256: 
+    # url: https://lc.llnl.gov/gitlab/weave/trata/archive/v{{ version }}.tar.gz
+    # sha256: 
 
 build:
   number: 0
   noarch: python
   script: {{ PYTHON }} -m pip install . -vv
   entry_points:
-    - sampling-methods = sampling_methods:init
+    - trata = trata:init
 
 requirements:
   host:
@@ -27,15 +27,14 @@ requirements:
 
 test:
   imports:
-    - sampling-methods
-    - sensitivity-methods
+    - ibis
   commands:
     - pip check
   requires:
     - pip
 
 about:
-    home:  https://github.com/LLNL/sampling-methods
+    # home:  https://github.com/LLNL/trata
     summary: 
     license: BSD 3-Clause
     license_file: LICENSE

@@ -1,5 +1,5 @@
 Sampler
 =======
 
-.. automodule:: sampling_methods.sampler
+.. automodule:: trata.sampler
    :members:

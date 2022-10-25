@@ -1,8 +1,11 @@
 import pkg_resources
 
 try:
-    d = pkg_resources.get_distribution("sampling-methods")
-    __version__ = d.version
+    d = pkg_resources.get_distribution("trata")
+    if d.version == "0.0.0":
+        __version__ = "1.0.0"
+    else:
+        __version__ = d.version
     metadata = list(d._get_metadata(d.PKG_INFO))
     __sha__ = None
     for meta in metadata:
