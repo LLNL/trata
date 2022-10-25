@@ -1,5 +1,5 @@
 Composite Samples
 =================
 
-.. automodule:: sampling_methods.composite_samples
+.. automodule:: trata.composite_samples
    :members:

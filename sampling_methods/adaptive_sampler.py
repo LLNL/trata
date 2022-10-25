@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import absolute_import
 
 import numpy as np
-from sampling_methods import sampler
+from trata import sampler
 from scipy import optimize
 from copy import deepcopy as cp
 

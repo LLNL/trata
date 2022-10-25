@@ -6,6 +6,6 @@
 # chmod 777 /collab/usr/gapps/uq/UQPipeline/doc/tmp/html -R
 # xsu vnvadm -c '/collab/usr/gapps/uq/UQPipeline/doc/tmp/deploy.sh'
 
-cd ~/sampling-methods/docs/
+cd ~/trata/docs/
 make html
-# cp ~/sampling-methods/docs//build/html /collab/usr/gapps/uq/sampling-methods/doc/tmp/ -rf
+# cp ~/trata/docs//build/html /collab/usr/gapps/uq/trata/doc/tmp/ -rf

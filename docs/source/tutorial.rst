@@ -13,7 +13,7 @@ To create a set of 10 points using the latin hypercube strategy in the unit squa
 
 .. code:: python
 
-   from sampling_methods.sampler import LatinHyperCubeSampler
+   from trata.sampler import LatinHyperCubeSampler
    points = LatinHyperCubeSampler.sample_points(num_points=10, box=[[0, 1], [0, 1]])
 
 Full description of samplers and their arguments can be found in this `notebook <_static/Demostration_of_Samplers.html>`_.
@@ -57,9 +57,9 @@ We'll instantiate each of these so we can use them later.
 
 .. code:: python
 
-   corner_sampler = sampling_methods.CornerSampler()
-   face_sampler = sampling_methods.OneAtATimeSampler()
-   lhs_sampler = sampling_methods.LatinHyperCubeSampler()
+   corner_sampler = trata.CornerSampler()
+   face_sampler = trata.OneAtATimeSampler()
+   lhs_sampler = trata.LatinHyperCubeSampler()
 
 To actually generate the sample points we use the :code:`generate_samples` method.
 This method takes a list of variable names and a sampler (with a set of keyword arguments).

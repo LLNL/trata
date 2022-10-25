@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 from subprocess import Popen, PIPE
 
-version = "1.0"
+version = "1.0.0"
 sha = None
 git_describe_process = Popen(
     ("git",
@@ -26,7 +26,7 @@ except Exception:
     pass
 
 # Provide better description
-description="LLNL's Sampling Methods"
+description="Trata"
 if sha is not None:
     description += " (sha: {})".format(sha)
 
@@ -35,28 +35,24 @@ with open("README.md", "r") as fh:
 
 setup(name="sampling-methods",
       version=version,
-     #version="0.0.1.dev1",
       description=description,
-      url="https://github.com/LLNL/sampling-methods",
-     #url="https://lc.llnl.gov/bitbucket/projects/UQP/repos/uqp/",
+      url="https://lc.llnl.gov/gitlab/weave/trata",
       author="Sarah El-Jurf",
       author_email="eljurf1@llnl.gov",
-     #author="LLNL UQP Team",
-     #author_email="uqpipeline-devs@llnl.gov",
       long_description=long_description,
       long_description_content_type="text/markdown",
       license="BSD 3-Clause",
       packages=find_packages(),
       zip_safe=False,
       install_requires=[
-            "numpy>=1.15,<1.19",
+            "numpy",#>=1.15,<1.19",
             "scikit-learn",
             "scipy",
             "matplotlib",
       ],
       classifiers=[
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 2.7",
+            #"Programming Language :: Python :: 2.7",
             "Operating System :: OS Independent",
       ],
       python_requires=">=3.6, >=2.7.16, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",

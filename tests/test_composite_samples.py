@@ -4,54 +4,54 @@ from __future__ import absolute_import
 
 import pytest
 import numpy as np
-import sampling_methods.composite_samples
-import sampling_methods.sampler
+import trata.composite_samples
+import trata.sampler
 
 
 def test_genSamples_valid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     ls_test_variables = ['x', 'y']
     for var in ls_test_variables:
         test_samples.set_continuous_variable(var, 0, 0, 1)
-    test_sampler = sampling_methods.sampler.SamplePointsSampler()
+    test_sampler = trata.sampler.SamplePointsSampler()
     np_expected_points = np.array([[1, 2, 3, 4], [5, 6, 7, 8]])
     test_samples.generate_samples(ls_test_variables, test_sampler, samples=np_expected_points)
     for i, var in enumerate(ls_test_variables):
         expected = np_expected_points.T[i]
         actual = test_samples.dt_variables[var].np_points
         np.testing.assert_array_equal(expected, actual)
-    test_samples2 = sampling_methods.composite_samples.Samples()
+    test_samples2 = trata.composite_samples.Samples()
     test_samples2.set_continuous_variable('Cont', 1, 2, 3)
     test_samples2.set_discrete_variable('Disc', [1, 2, 3], 1)
     test_samples2.set_discrete_ordered_variable('DiscOrdered', [1, 2, 3], 1)
     test_samples2.generate_samples(['Cont', 'Disc', 'DiscOrdered'],
-                                   sampling_methods.sampler.LatinHyperCubeSampler(),
+                                   trata.sampler.LatinHyperCubeSampler(),
                                    num_points=3)
     test_samples2.generate_samples(['Cont', 'DiscOrdered'],
-                                   sampling_methods.sampler.CornerSampler())
+                                   trata.sampler.CornerSampler())
 
 def test_genSamples_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     # Variable 'test1' not added yet
     pytest.raises(KeyError, test_samples.generate_samples,
                       ['test1'],
-                      sampling_methods.sampler.SamplePointsSampler(),
+                      trata.sampler.SamplePointsSampler(),
                       samples=np.array([[1], [3]]))
     # Variable 'x' added, but Variable 'y' not added yet
     test_samples.set_continuous_variable('test1', 0, 0, 1)
     pytest.raises(KeyError, test_samples.generate_samples,
                       ['test1', 'test2'],
-                      sampling_methods.sampler.SamplePointsSampler(),
+                      trata.sampler.SamplePointsSampler(),
                       samples=np.array([[1, 2], [3, 4]]))
     # Variable type not list of strings
     pytest.raises(TypeError, test_samples.generate_samples,
                       [0],
-                      sampling_methods.sampler.SamplePointsSampler(),
+                      trata.sampler.SamplePointsSampler(),
                       samples=np.array([[1], [3]]))
     # Variable type not list
     pytest.raises(KeyError, test_samples.generate_samples,
                       'test1',
-                      sampling_methods.sampler.SamplePointsSampler(),
+                      trata.sampler.SamplePointsSampler(),
                       samples=np.array([[1], [3]]))
     # 'sampler' parameter not a sampler.Sampler
     pytest.raises(ValueError, test_samples.generate_samples,
@@ -60,11 +60,11 @@ def test_genSamples_invalid():
     # No kwArgs given
     pytest.raises(TypeError, test_samples.generate_samples,
                       ['test1'],
-                      sampling_methods.sampler.SamplePointsSampler())
+                      trata.sampler.SamplePointsSampler())
     # Incorrect kwArgs given
     pytest.raises(TypeError, test_samples.generate_samples,
                       ['test1'],
-                      sampling_methods.sampler.SamplePointsSampler(),
+                      trata.sampler.SamplePointsSampler(),
                       incorrectArgument='foo')
     # Check that no points were generated
     np_expected = np.array([])
@@ -73,13 +73,13 @@ def test_genSamples_invalid():
 
 def test_setContinuousVariable_valid():
     # Without scaled parameters
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     str_name1 = 'test1'
     f_low_val1 = -1.1
     f_default_val1 = 0.1
     f_high_val1 = 1.1
     test_samples.set_continuous_variable(str_name1, f_low_val1, f_default_val1, f_high_val1)
-    expected_variable1 = sampling_methods.composite_samples.ContinuousVariable(str_name1,
+    expected_variable1 = trata.composite_samples.ContinuousVariable(str_name1,
                                                                                f_low_val1,
                                                                                f_default_val1,
                                                                                f_high_val1,
@@ -98,7 +98,7 @@ def test_setContinuousVariable_valid():
     test_samples.set_continuous_variable(str_name2, f_low_val2, f_default_val2, f_high_val2,
                                          str_scaling_type,
                                          f_scaled_low_val2, f_scaled_default_val2, f_scaled_high_val2)
-    expected_variable2 = sampling_methods.composite_samples.ContinuousVariable(str_name2,
+    expected_variable2 = trata.composite_samples.ContinuousVariable(str_name2,
                                                                                f_low_val2,
                                                                                f_default_val2,
                                                                                f_high_val2,
@@ -110,7 +110,7 @@ def test_setContinuousVariable_valid():
     assert expected_variable2==actual_variable2
 
 def test_setContinuousVariable_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     # No arguments
     pytest.raises(TypeError, test_samples.set_continuous_variable)
     # Too many arguments
@@ -122,12 +122,12 @@ def test_setContinuousVariable_invalid():
     assert expected==actual
 
 def test_setDiscreteVariable_valid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     str_name = 'test'
     ls_values = [1, 2, 3, 1.1, 2.2, 3.3, 'foo', 'bar']
     default = 'foo'
     test_samples.set_discrete_variable(str_name, ls_values, default)
-    expected_variable = sampling_methods.composite_samples.DiscreteVariable(str_name, ls_values, default)
+    expected_variable = trata.composite_samples.DiscreteVariable(str_name, ls_values, default)
     actual_variable = test_samples.dt_variables[str_name]
     assert expected_variable==actual_variable
     expected_values = ls_values
@@ -135,7 +135,7 @@ def test_setDiscreteVariable_valid():
     assert expected_values==actual_values
 
 def test_setDiscreteVariable_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     # No arguments
     pytest.raises(TypeError, test_samples.set_discrete_variable)
     # Too many arguments
@@ -149,18 +149,18 @@ def test_setDiscreteVariable_invalid():
     # Cannot use Continuous Sampler on Discrete Variable
     pytest.raises(TypeError,
                       test_samples.generate_samples,
-                      ['X'], sampling_methods.sampler.ProbabilityDensityFunctionSampler(), num_points=10,
+                      ['X'], trata.sampler.ProbabilityDensityFunctionSampler(), num_points=10,
                       dist='norm')
     # Ensure no points were added
     np.testing.assert_array_equal(test_samples.dt_variables['X'].np_points, np.array([]))
 
 def test_setDiscreteOrderedVariable_valid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     str_name = 'test'
     ls_values = [1, 2, 3, 1.1, 2.2, 3.3, 'foo', 'bar']
     default = 'foo'
     test_samples.set_discrete_ordered_variable(str_name, ls_values, default)
-    expected_variable = sampling_methods.composite_samples.DiscreteOrderedVariable(str_name, ls_values, default)
+    expected_variable = trata.composite_samples.DiscreteOrderedVariable(str_name, ls_values, default)
     actual_variable = test_samples.dt_variables[str_name]
     assert expected_variable==actual_variable
     expected_values = ls_values
@@ -168,7 +168,7 @@ def test_setDiscreteOrderedVariable_valid():
     assert expected_values==actual_values
 
 def test_setDiscreteOrderedVariable_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     # No arguments
     pytest.raises(TypeError, test_samples.set_discrete_ordered_variable)
     # Too many arguments
@@ -180,8 +180,8 @@ def test_setDiscreteOrderedVariable_invalid():
     assert expected==actual
 
 def test_getPoints_valid():
-    test_samples = sampling_methods.composite_samples.Samples()
-    test_sampler = sampling_methods.sampler.LatinHyperCubeSampler()
+    test_samples = trata.composite_samples.Samples()
+    test_sampler = trata.sampler.LatinHyperCubeSampler()
     i_num_points = 100
     ls_box = [[-1, 1], [-2, 3], [5.5, 6.7]]
     i_seed = 2016
@@ -208,8 +208,8 @@ def test_getPoints_valid():
     np.testing.assert_array_equal(np_actual5, np.array([np_expected.T[0]]).T)
 
 def test_getPoints_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
-    test_sampler = sampling_methods.sampler.LatinHyperCubeSampler()
+    test_samples = trata.composite_samples.Samples()
+    test_sampler = trata.sampler.LatinHyperCubeSampler()
     i_num_points = 100
     ls_box = [[-1, 1], [-2, 3], [5.5, 6.7]]
     i_seed = 2016
@@ -231,8 +231,8 @@ def test_getPoints_invalid():
     pytest.raises(TypeError, test_samples.get_points, [123])
 
 def test_getLength_valid():
-    test_samples = sampling_methods.composite_samples.Samples()
-    test_sampler = sampling_methods.sampler.LatinHyperCubeSampler()
+    test_samples = trata.composite_samples.Samples()
+    test_sampler = trata.sampler.LatinHyperCubeSampler()
     i_num_points = 100
     ls_box = [[-1, 1], [-2, 3], [5.5, 6.7]]
     i_seed = 2016
@@ -260,8 +260,8 @@ def test_getLength_valid():
     np.testing.assert_array_equal(np_actual5, np_expected2)
 
 def test_getLength_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
-    test_sampler = sampling_methods.sampler.LatinHyperCubeSampler()
+    test_samples = trata.composite_samples.Samples()
+    test_sampler = trata.sampler.LatinHyperCubeSampler()
     i_num_points = 100
     ls_box = [[-1, 1], [-2, 3], [5.5, 6.7]]
     i_seed = 2016
@@ -283,7 +283,7 @@ def test_getLength_invalid():
     pytest.raises(TypeError, test_samples.get_length, [123])
 
 def test_getRange_valid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     test_samples.set_continuous_variable('test1', -1.1, 0.1, 1.1)
     np.testing.assert_array_equal(test_samples.get_ranges('test1'), np.array([[-1.1, 1.1]]))
     test_samples.set_continuous_variable('test2', -2.3, .3, 3.2)
@@ -293,8 +293,8 @@ def test_getRange_valid():
         assert var==test
 
 def test_getRange_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
-    test_sampler = sampling_methods.sampler.LatinHyperCubeSampler()
+    test_samples = trata.composite_samples.Samples()
+    test_sampler = trata.sampler.LatinHyperCubeSampler()
     i_num_points = 100
     ls_box = [[-1, 1], [-2, 3], [5.5, 6.7]]
     i_seed = 2016
@@ -316,12 +316,12 @@ def test_getRange_invalid():
     pytest.raises(TypeError, test_samples.get_ranges, [123])
 
 def test_getVariable_valid():
-    test_samples = sampling_methods.composite_samples.Samples()
+    test_samples = trata.composite_samples.Samples()
     test_samples.set_continuous_variable('test1', -1.1, 0.1, 1.1)
     test_samples.set_continuous_variable('test2', -2.3, .3, 3.2)
-    actual_variable1 = sampling_methods.composite_samples.ContinuousVariable('test1', -1.1, 0.1, 1.1,
+    actual_variable1 = trata.composite_samples.ContinuousVariable('test1', -1.1, 0.1, 1.1,
                                                                              None, None, None, None)
-    actual_variable2 = sampling_methods.composite_samples.ContinuousVariable('test2', -2.3, .3, 3.2,
+    actual_variable2 = trata.composite_samples.ContinuousVariable('test2', -2.3, .3, 3.2,
                                                                              None, None, None, None)
     np.testing.assert_array_equal(test_samples.get_variables(), [actual_variable1, actual_variable2])
     np.testing.assert_array_equal(test_samples.get_variables(['test2', 'test1']),
@@ -332,8 +332,8 @@ def test_getVariable_valid():
     np.testing.assert_array_equal(test_samples.get_variables('test2'), [actual_variable2])
 
 def test_getVariable_invalid():
-    test_samples = sampling_methods.composite_samples.Samples()
-    test_sampler = sampling_methods.sampler.LatinHyperCubeSampler()
+    test_samples = trata.composite_samples.Samples()
+    test_sampler = trata.sampler.LatinHyperCubeSampler()
     i_num_points = 100
     ls_box = [[-1, 1], [-2, 3], [5.5, 6.7]]
     i_seed = 2016
