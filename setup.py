@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 from subprocess import Popen, PIPE
 
-version = "1.0.0"
+version = ''
 sha = None
 git_describe_process = Popen(
     ("git",
@@ -15,6 +15,8 @@ try:
     version = out.decode("utf-8")
     sp = version.split("-")
     version = sp[0]
+    if version == '':
+        version = '1.0.0'
     # Clean tag?
     if len(sp) != 0:
         commits = sp[1]
@@ -33,7 +35,7 @@ if sha is not None:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(name="sampling-methods",
+setup(name="trata",
       version=version,
       description=description,
       url="https://lc.llnl.gov/gitlab/weave/trata",
@@ -45,7 +47,7 @@ setup(name="sampling-methods",
       packages=find_packages(),
       zip_safe=False,
       install_requires=[
-            "numpy",#>=1.15,<1.19",
+            "numpy",
             "scikit-learn",
             "scipy",
             "matplotlib",

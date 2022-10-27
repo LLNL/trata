@@ -34,7 +34,7 @@ test:
     - pip
 
 about:
-    # home:  https://github.com/LLNL/trata
+    home:  https://github.com/LLNL/trata
     summary: 
     license: BSD 3-Clause
     license_file: LICENSE
