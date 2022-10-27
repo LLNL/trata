@@ -59,7 +59,7 @@ export TRATA_PATH = trata                     # `trata` can be any name/director
 pip install virtualenv                        # just in case
 python3 -m virtualenv $TRATA_PATH   
 source ${TRATA_PATH}/bin/activate
-pip install "numpy>=1.15,<1.19" scikit-learn scipy matplotlib 
+pip install numpy scikit-learn scipy matplotlib 
 git clone https://github.com/LLNL/trata
 cd trata
 pip install .
@@ -68,7 +68,7 @@ pip install .
 ### via conda:
 
 ```bash
-conda create -n trata -c conda-forge "python>=3.6" "numpy>=1.15,<1.19" scikit-learn scipy matplotlib
+conda create -n trata -c conda-forge "python>=3.6" numpy scikit-learn scipy matplotlib
 conda activate trata
 git clone https://github.com/LLNL/trata
 cd trata
@@ -108,7 +108,7 @@ export TRATA_PATH = trata                 # `trata` can be any name/directory yo
 pip install virtualenv                    # just in case
 python3 -m virtualenv $TRATA_PATH   
 source ${TRATA_PATH}/bin/activate
-pip install "numpy>=1.15,<1.19" scikit-learn scipy matplotlib six pip pytest pytest-json-report sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets 
+pip install numpy scikit-learn scipy matplotlib six pip pytest pytest-json-report sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets 
 git clone https://github.com/LLNL/trata
 cd trata
 pip install .
@@ -116,7 +116,7 @@ pip install .
 ### via conda:
 
 ```bash
-conda create -n trata -c conda-forge "python>=3.6" "numpy>=1.15,<1.19" scikit-learn scipy matplotlib six pip pytest pytest-json-report sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets nb_conda nb_conda_kernels 
+conda create -n trata -c conda-forge "python>=3.6" numpy scikit-learn scipy matplotlib six pip pytest pytest-json-report sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets nb_conda nb_conda_kernels 
 conda activate trata
 git clone https://github.com/LLNL/trata
 cd trata
