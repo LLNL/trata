@@ -1,4 +1,5 @@
-# Trata
+![](./logo.png)
+ # Trata Bayesian Sampling
 
 In creating a surrogate model, generating initial training data requires the selection of samples from the design parameter spaces. Trata is used to generate sample points in order to explore a parameter space. 
 
