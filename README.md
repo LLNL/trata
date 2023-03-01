@@ -1,4 +1,5 @@
-# Trata
+![](./logo.png)
+ # Trata Bayesian Sampling
 
 In creating a surrogate model, generating initial training data requires the selection of samples from the design parameter spaces. Trata is used to generate sample points in order to explore a parameter space. 
 
@@ -75,7 +76,7 @@ cd trata
 pip install .
 ```
 
-## Run Tests
+## For Running Tests
 
 ```bash
 pip install pytest pytest-json-report
@@ -86,7 +87,7 @@ pip install pytest pytest-json-report
 conda install -n trata -c conda-forge pytest pytest-json-report
 ```
 
-## Build Docs
+## For Building Docs
 
 ### via pip:
 
@@ -128,3 +129,21 @@ pip install .
 ```bash
 python -m ipykernel install --user --name trata --display-name "Trata Environment"
 ```
+Standard Setup
+==============
+
+Standard installation, provided by the Makefile, is initiated by entering
+the following at the command line::
+
+    $ make
+
+This command creates the virtual environment, installs \(missing\) dependencies,
+and installs Trata.
+
+You can build the documentation from `docs`, which will appear in `build/docs`, using::
+
+    $ make html
+
+Test are run by entering::
+
+    $ make run_tests
