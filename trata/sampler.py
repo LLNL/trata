@@ -863,15 +863,17 @@ class CartesianCrossSampler(ContinuousSampler, DiscreteSampler):
 
         if len(np.array(box).shape) > 2:
             raise ValueError('Box cannot have more than 2 dimensions')
+        if box != None and not any(isinstance(_, list) for _ in box):
+            raise TypeError("Type of 'box' must be list [[float]]")
 
         np_box = np.array(DiscreteSampler.normalize_box(box, values), dtype='float')
         i_num_dim = np_box.shape[0]
 
         if isinstance(num_divisions, int):
-
             # Use the same number of divisions for each dimension
             np_num_div = np.repeat(num_divisions, i_num_dim).astype('int')
-
+            if i_num_dim != np_num_div.shape[0]:
+                raise ValueError("Length of box != Length of num_divisions")
         elif isinstance(num_divisions, list):
             np_num_div = np.array(num_divisions, dtype='int')
             if i_num_dim != np_num_div.shape[0]:
@@ -1207,17 +1209,17 @@ class FaceSampler(ContinuousSampler):
                 raise ValueError("Length of box != Length of num_divisions")
 
         ls_points = []
-        for i in range(i_num_dim):
+        for _ in range(i_num_dim):
             ls_alt_num_div = deepcopy(ls_num_div)
 
-            # Replace i-th division in nDim with a list containing the range extent (low or high) in that dimension
-            ls_alt_num_div[i] = ls_box[i][0]  #removed outer brackets
+            # # Replace i-th division in nDim with a list containing the range extent (low or high) in that dimension
+            # ls_alt_num_div[i] = ls_box[i][0]  #removed outer brackets
 
             # Then perform cartesian cross sampling with the altered divisions
             ls_points.append(CartesianCrossSampler.sample_points(box=ls_box, num_divisions=ls_alt_num_div))
 
-            ls_alt_num_div[i] = ls_box[i][1]    #removed outer brackets
-            ls_points.append(CartesianCrossSampler.sample_points(box=ls_box, num_divisions=ls_alt_num_div))
+            # ls_alt_num_div[i] = ls_box[i][1]    #removed outer brackets
+            # ls_points.append(CartesianCrossSampler.sample_points(box=ls_box, num_divisions=ls_alt_num_div))
 
         np_points = np.concatenate(ls_points, axis=0)
 

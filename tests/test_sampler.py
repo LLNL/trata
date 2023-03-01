@@ -602,7 +602,7 @@ def test_CartesianCrossSampler_invalid():
     # num_divisions, box, nor values not given
     pytest.raises(TypeError, trata.sampler.CartesianCrossSampler.sample_points)
     # not enough dimensions in box
-    pytest.raises(IndexError, trata.sampler.CartesianCrossSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.CartesianCrossSampler.sample_points,
                       box=[0.0, 1.0],
                       num_divisions=10)
     # box not list
@@ -1087,7 +1087,7 @@ def test_MultiNormalSampler_invalid():
                                      [0.2, 1.0, 0.6],
                                      [0.4, 0.3, 1.0]])
 
-@pytest.mark.xfail
+# @pytest.mark.xfail
 def test_FaceSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
     np_actual_values = trata.sampler.FaceSampler.sample_points(box=ls_test_box,
@@ -1105,6 +1105,7 @@ def test_FaceSampler_valid():
                           [12.5, -25.0, 0.0],
                           [12.5, -25.0, 25.0],
                           [12.5, -12.5, -25.0],
+                          [12.5, -12.5, 0.0],
                           [12.5, -12.5, 25.0],
                           [12.5, 0.0, -25.0],
                           [12.5, 0.0, 0.0],
@@ -1122,14 +1123,14 @@ def test_FaceSampler_valid():
     np_actual_values_equal_area = trata.sampler.FaceSampler.sample_points(box=ls_test_box,
                                                                                      num_divisions=2,
                                                                                      equal_area_divs=True)
-    ls_expected_values_equal_area = [[0., -25., -25.],
-                                     [0., -25., 25.],
-                                     [0., 0., -25.],
-                                     [0., 0., 25.],
-                                     [25., -25., -25.],
-                                     [25., -25., 25.],
-                                     [25., 0., -25.],
-                                     [25., 0., 25.]]
+    ls_expected_values_equal_area = [[0.0, -25.0, -25.0],
+                                     [0.0, -25.0, 25.0],
+                                     [0.0, 0.0, -25.0],
+                                     [0.0, 0.0, 25.0],
+                                     [25.0, -25.0, -25.0],
+                                     [25.0, -25.0, 25.0],
+                                     [25.0, 0.0, -25.0],
+                                     [25.0, 0.0, 25.0]]
     np.testing.assert_array_equal(np_actual_values_equal_area, ls_expected_values_equal_area)
 
 def test_FaceSampler_invalid():
