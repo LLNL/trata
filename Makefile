@@ -44,7 +44,7 @@ create_env:
 	if [ -d $(TRATA_ENV) ]; then \
 	  rm -rf $(TRATA_ENV); \
 	fi;
-	$(call create_env,$(TRATA_ENV))
+	$(call create_env,$(WORKSPACE)/$(TRATA_ENV))
 
 
 .PHONY: run_tests
