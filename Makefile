@@ -10,29 +10,25 @@ CI_UTILS = /usr/workspace/weave/ci_utils
 
 PYTHON_CMD = /usr/tce/packages/python/python-3.8.2/bin/python3
 
+PIP_OPTIONS = "--trusted-host wci-repo.llnl.gov --index-url https://wci-repo.llnl.gov/repository/pypi-group/simple"
+
 define create_env
 	# call from the directory where env will be created
 	# arg1: name of env
 	$(PYTHON_CMD) -m venv $1
 	source $1/bin/activate && \
-	pip3 install --upgrade pip && \
-	pip3 install numpy scikit-learn scipy matplotlib && \
-	pip3 install --force pytest && \
-	which pytest
+	pip3 install $(PIP_OPTIONS) --upgrade pip && \
+	pip3 install $(PIP_OPTIONS) --force pytest && \
+	pip3 install $(PIP_OPTIONS) .
 endef
 
 define run_trata_tests
 	# call from the top repository directory
 	# arg1: full path to venv
 	source $1/bin/activate && \
-	pip3 install . && \
 	which pip && \
 	which pytest && \
-	if [ -z $(DISPLAY) ]; then \
-	  xvfb-run --auto-servernum pytest --capture=tee-sys -v tests/; \
-	else \
-	  pytest --capture=tee-sys -v tests/; \
-	fi;
+	pytest --capture=tee-sys -v tests/
 endef
 
 
