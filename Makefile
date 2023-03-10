@@ -17,6 +17,7 @@ define create_env
 	# arg1: name of env
 	$(PYTHON_CMD) -m venv $1
 	source $1/bin/activate && \
+	which pip && \
 	pip install $(PIP_OPTIONS) --upgrade pip && \
 	pip install $(PIP_OPTIONS) --force pytest && \
 	pip install $(PIP_OPTIONS) .
@@ -26,9 +27,12 @@ define run_trata_tests
 	# call from the top repository directory
 	# arg1: full path to venv
 	source $1/bin/activate && \
-	which pip && \
 	which pytest && \
-	pytest --capture=tee-sys -v tests/
+	if [ $(TESTS) ]; then \
+		pytest --capture=tee-sys -v $(TESTS); \
+	else \
+		pytest --capture=tee-sys -v tests/; \
+	fi
 endef
 
 
