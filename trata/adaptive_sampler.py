@@ -216,8 +216,8 @@ class DeltaSampler(ScoredSampler):
                                        for i in range(np_candidate_points.shape[0])])
 
         # Get the npY value from the corresponding npX value closest to each candidate points
-        np_closest_values = np_y[np_closest_indices]
-        return abs(np_closest_values-np_candidate_predicted).flatten()
+        np_closest_values = np_y[np_closest_indices].flatten()
+        return abs(np_closest_values-np_candidate_predicted)#.flatten()
 
     @staticmethod
     def _get_closest_index(reference_point, X):

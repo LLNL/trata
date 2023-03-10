@@ -205,7 +205,7 @@ class LatinHyperCubeSampler(ContinuousSampler, DiscreteOrderedSampler):
         f_a = f_low
         for _ in range(i_num_intervals):
             f_b = f_a + f_delta
-            ls_intervals.append((f_a, f_b))
+            ls_intervals.append((float(f_a), float(f_b)))
             f_a = f_b
             f_delta = f_epsilon * f_delta
 
@@ -861,7 +861,7 @@ class CartesianCrossSampler(ContinuousSampler, DiscreteSampler):
             - TypeError
         """
 
-        if len(np.array(box).shape) > 2:
+        if len(np.array(box, dtype=object).shape) > 2:
             raise ValueError('Box cannot have more than 2 dimensions')
         if box != None and not any(isinstance(_, list) for _ in box):
             raise TypeError("Type of 'box' must be list [[float]]")
