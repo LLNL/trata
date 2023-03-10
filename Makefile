@@ -10,7 +10,7 @@ CI_UTILS = /usr/workspace/weave/ci_utils
 
 PYTHON_CMD = /usr/tce/packages/python/python-3.8.2/bin/python3
 
-PIP_OPTIONS = "--trusted-host wci-repo.llnl.gov --index-url https://wci-repo.llnl.gov/repository/pypi-group/simple"
+PIP_OPTIONS = --trusted-host wci-repo.llnl.gov --index-url https://wci-repo.llnl.gov/repository/pypi-group/simple
 
 define create_env
 	# call from the directory where env will be created
