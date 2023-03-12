@@ -3,36 +3,38 @@ SHELL := /bin/bash
 USER_WORKSPACE := $(if $(USER_WORKSPACE), $(USER_WORKSPACE),/usr/workspace/$(USER))
 WORKSPACE = $(USER_WORKSPACE)/gitlab/weave/trata
 TRATA_ENV := $(if $(TRATA_ENV),$(TRATA_ENV),trata_env)
-
+ 
 # PKG_REGISTRY_URL = $(CI_API_V4_URL)/projects/$(CI_PROJECT_ID)/packages/generic/archive
 # DEPLOY_PATH = /usr/gapps/trata
 CI_UTILS = /usr/workspace/weave/ci_utils
 
 PYTHON_CMD = /usr/tce/packages/python/python-3.8.2/bin/python3
 
+PIP_OPTIONS = --trusted-host wci-repo.llnl.gov --index-url https://wci-repo.llnl.gov/repository/pypi-group/simple --use-pep517
+
+DOCS_PKGS = sphinx nbsphinx nbconvert sphinx-rtd-theme
+
 define create_env
 	# call from the directory where env will be created
 	# arg1: name of env
 	$(PYTHON_CMD) -m venv $1
 	source $1/bin/activate && \
-	pip3 install --upgrade pip && \
-	pip3 install numpy scikit-learn scipy matplotlib && \
-	pip3 install --force pytest && \
-	which pytest
+	which pip && \
+	pip install $(PIP_OPTIONS) --upgrade pip && \
+	pip install $(PIP_OPTIONS) --force pytest && \
+	pip install $(PIP_OPTIONS) .
 endef
 
 define run_trata_tests
 	# call from the top repository directory
 	# arg1: full path to venv
 	source $1/bin/activate && \
-	pip3 install . && \
-	which pip && \
 	which pytest && \
-	if [ -z $(DISPLAY) ]; then \
-	  xvfb-run --auto-servernum pytest --capture=tee-sys -v tests/; \
+	if [ $(TESTS) ]; then \
+		pytest --capture=tee-sys -v $(TESTS); \
 	else \
-	  pytest --capture=tee-sys -v tests/; \
-	fi;
+		pytest --capture=tee-sys -v tests/; \
+	fi
 endef
 
 
@@ -52,6 +54,13 @@ run_tests:
 	@echo "Run tests...";
 	$(call run_trata_tests,$(WORKSPACE)/$(TRATA_ENV))
 
+
+.PHONY: build_docs
+build_docs:
+	@echo "Build docs...";
+	source $(WORKSPACE)/$(TRATA_ENV)/bin/activate && \
+	pip install $(PIP_OPTIONS) $(DOCS_PKGS) && \
+	cd docs && make html
 
 # .PHONY: release
 # release:
