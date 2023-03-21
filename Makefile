@@ -22,7 +22,9 @@ define create_env
 	which pip && \
 	pip install $(PIP_OPTIONS) --upgrade pip && \
 	pip install $(PIP_OPTIONS) --force pytest && \
-	pip install $(PIP_OPTIONS) .
+	pip install $(PIP_OPTIONS) . && \
+	pip list && \
+	echo "Test environment is created: $1"
 endef
 
 define run_trata_tests
