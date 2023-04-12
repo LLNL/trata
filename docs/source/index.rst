@@ -23,16 +23,17 @@ The ``trata`` package works with Python 3 and is made up of 3 modules:
    * ``composite_samples``
    * ``adaptive_samples``
 
-On LC RZ and CZ systems as an example, they are available at ``/collab/usr/gapps/uq/trata``.
-On LANL's Trinitite, they are available at ``/usr/projects/packages/trata/``. Demo usage (on LC):
+On LC RZ and CZ systems, ``trata`` is available in the weave-develop environment. You can activate the weave-develop environment by running:
+
+::
+
+         source /usr/apps/weave/weave-develop/bin/activate
+ 
+Demo usage:
 
 .. code:: python
 
-        import sys
-        sys.path.append("/collab/usr/gapps/uq/trata")
-
-        from trata import composite_samples
-
+         from trata import composite_samples
 
 .. toctree::
    :maxdepth: 2
