@@ -79,12 +79,12 @@ pip install .
 ## For Running Tests
 
 ```bash
-pip install pytest pytest-json-report
+pip install pytest 
 ```
 ### via conda:
 
 ```bash
-conda install -n trata -c conda-forge pytest pytest-json-report
+conda install -n trata -c conda-forge pytest 
 ```
 
 ## For Building Docs
@@ -109,7 +109,7 @@ export TRATA_PATH = trata                 # `trata` can be any name/directory yo
 pip install virtualenv                    # just in case
 python3 -m virtualenv $TRATA_PATH   
 source ${TRATA_PATH}/bin/activate
-pip install numpy scikit-learn scipy matplotlib six pip pytest pytest-json-report sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets 
+pip install numpy scikit-learn scipy matplotlib six pip pytest sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets 
 git clone https://github.com/LLNL/trata
 cd trata
 pip install .
@@ -133,17 +133,17 @@ Standard Setup
 ==============
 
 Standard installation, provided by the Makefile, is initiated by entering
-the following at the command line::
+the following at the command line:
 
     $ make
 
 This command creates the virtual environment, installs \(missing\) dependencies,
 and installs Trata.
 
-You can build the documentation from `docs`, which will appear in `build/docs`, using::
-
-    $ make html
-
-Test are run by entering::
+Test are run by entering:
 
     $ make run_tests
+
+You can build the documentation from `docs`, which will appear in `build/docs`, using:
+
+    $ make html
