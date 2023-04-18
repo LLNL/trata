@@ -4,8 +4,6 @@ USER_WORKSPACE := $(if $(USER_WORKSPACE), $(USER_WORKSPACE),/usr/workspace/$(USE
 WORKSPACE = $(USER_WORKSPACE)/gitlab/weave/trata
 TRATA_ENV := $(if $(TRATA_ENV),$(TRATA_ENV),trata_env)
  
-# PKG_REGISTRY_URL = $(CI_API_V4_URL)/projects/$(CI_PROJECT_ID)/packages/generic/archive
-# DEPLOY_PATH = /usr/gapps/trata
 CI_UTILS = /usr/workspace/weave/ci_utils
 
 PYTHON_CMD = /usr/tce/packages/python/python-3.8.2/bin/python3
