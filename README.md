@@ -51,99 +51,34 @@ The **`adaptive_sampler`** module allows a user to specify learning functions to
    - `LearningExpectedImprovement`<br>
 <br>
 
-## Basic Installation
+## Getting Started
 
-### via pip:
+To get the latest public version:
 
 ```bash
-export TRATA_PATH = trata                     # `trata` can be any name/directory you want
-pip install virtualenv                        # just in case
-python3 -m virtualenv $TRATA_PATH   
-source ${TRATA_PATH}/bin/activate
-pip install numpy scikit-learn scipy matplotlib 
-git clone https://github.com/LLNL/trata
-cd trata
+pip install trata
+```
+
+To get the latest stable from a cloned repo, simply run:
+
+```bash
 pip install .
 ```
 
-### via conda:
+Alternatively, add the path to this repo to your PYTHONPATH environment variable or in your code with:
 
 ```bash
-conda create -n trata -c conda-forge "python>=3.6" numpy scikit-learn scipy matplotlib
-conda activate trata
-git clone https://github.com/LLNL/trata
-cd trata
-pip install .
+import sys
+sys.path.append(path_to_trata_repo)
 ```
+## Contact Info
 
-## For Running Tests
+Trata maintainer can be reached at: eljurf1@llnl.gov
+
+## Contributing
+
+Contributions should be submitted as a pull request pointing to the develop branch, and must pass Trata's CI process; to run the same checks locally, use:
 
 ```bash
-pip install pytest 
+pytest tests/test_*.py
 ```
-### via conda:
-
-```bash
-conda install -n trata -c conda-forge pytest 
-```
-
-## For Building Docs
-
-### via pip:
-
-```bash
-pip install sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx 
-```
-### via conda:
-
-```bash
-conda install -n trata -c conda-forge sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx
-```
-
-## Beefy Installation
-
-### via pip:
-
-```bash
-export TRATA_PATH = trata                 # `trata` can be any name/directory you want
-pip install virtualenv                    # just in case
-python3 -m virtualenv $TRATA_PATH   
-source ${TRATA_PATH}/bin/activate
-pip install numpy scikit-learn scipy matplotlib six pip pytest sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets 
-git clone https://github.com/LLNL/trata
-cd trata
-pip install .
-```
-### via conda:
-
-```bash
-conda create -n trata -c conda-forge "python>=3.6" numpy scikit-learn scipy matplotlib six pip pytest pytest-json-report sphinx sphinx_rtd_theme nbconvert sphinx-autoapi nbsphinx jupyterlab ipython ipywidgets nb_conda nb_conda_kernels 
-conda activate trata
-git clone https://github.com/LLNL/trata
-cd trata
-pip install .
-```
-
-## Register your Python env via Jupyter:
-
-```bash
-python -m ipykernel install --user --name trata --display-name "Trata Environment"
-```
-Standard Setup
-==============
-
-Standard installation, provided by the Makefile, is initiated by entering
-the following at the command line:
-
-    $ make
-
-This command creates the virtual environment, installs \(missing\) dependencies,
-and installs Trata.
-
-Test are run by entering:
-
-    $ make run_tests
-
-You can build the documentation from `docs`, which will appear in `build/docs`, using:
-
-    $ make html
