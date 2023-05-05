@@ -23,11 +23,11 @@ The ``trata`` package works with Python 3 and is made up of 3 modules:
    * ``composite_samples``
    * ``adaptive_samples``
 
-On LC RZ and CZ systems, ``trata`` is available in the weave-develop environment. You can activate the weave-develop environment by running:
+Installation:
 
 ::
 
-         source /usr/apps/weave/weave-develop/bin/activate
+         pip install trata
  
 Demo usage:
 
