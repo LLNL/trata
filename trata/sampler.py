@@ -939,7 +939,7 @@ class RejectionSampler(ContinuousSampler):
     name = "Rejection"
 
     @staticmethod
-    def sample_points(num_points, box, func, seed=None, metropolis=False, burn_in=None):
+    def sample_points(num_points, box, func, seed=None, metropolis=False, burn_in=None, **kwargs):
         """
         Create a set of points using a rejection algorithm.
 
@@ -1415,7 +1415,7 @@ class FractionalFactorialSampler(ContinuousSampler, DiscreteOrderedSampler):
     name = "Fractional Factorial"
 
     @staticmethod
-    def sample_points(box=None, values=None, resolution=None, fraction=None):
+    def sample_points(box=None, values=None, resolution=None, fraction=None, **kwargs):
         """
 
         Creates a set of points based on a fractional factorial design
@@ -1477,7 +1477,7 @@ class MorrisOneAtATimeSampler(ContinuousSampler):
     name = 'Morris One at a Time'
 
     @staticmethod
-    def sample_points(box, num_paths=1, seed=None):
+    def sample_points(box, num_paths=1, seed=None, **kwargs):
         rng = np.random.default_rng(seed)
 
         box = np.array(box)
