@@ -33,7 +33,7 @@ scipy = "*"
 matplotlib = "*"
 
 [tool.poetry.dev-dependencies]
-furo = "*"
+sphinx_rtd_theme = "*"
 sphinx = "*"
 pytest = "*"
 nbconvert = "*"
