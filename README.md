@@ -1,4 +1,5 @@
 ![](./logo.png)
+<<<<<<< HEAD
  # Trata Bayesian Sampling
 
 In creating a surrogate model, generating initial training data requires the selection of samples from the design parameter spaces. Trata is used to generate sample points in order to explore a parameter space. 
@@ -6,6 +7,11 @@ In creating a surrogate model, generating initial training data requires the sel
 For instance, if a simulation takes two inputs, x and y, and you want to run a set of simulations with x-values between 5 and 20 and y-values between 0.1 and 1000, the sampling component can generate sample points (in this case (x,y) pairs) for you. 
 
 You can specify how many total sample points you want, and how you want them to be chosen--Trata offers a large number of different sampling strategies. If, on the other hand, you already have sample points you wish to use, Trata can simply read them in from a file. 
+=======
+ # Trata Sampling Methods Package
+
+Trata offers a large number of general sampling strategies that can be used to explore parameter spaces or improve a model's predictive ability.
+>>>>>>> origin/develop
 
 Trata contains 3 modules:
    - **`composite_samples`**
@@ -83,7 +89,11 @@ Read the Docs coming soon.
 
 ## Contact Info
 
+<<<<<<< HEAD
 Trata maintainer can be reached at: eljurf1@llnl.gov
+=======
+Trata maintainer can be reached at: olson59@llnl.gov
+>>>>>>> origin/develop
 
 ## Contributing
 

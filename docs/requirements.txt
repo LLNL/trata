@@ -1,3 +1,7 @@
 sphinx 
+<<<<<<< HEAD
 furo
+=======
+sphinx_rtd_theme
+>>>>>>> origin/develop
 nbsphinx
