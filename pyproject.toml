@@ -3,6 +3,7 @@
 name = "trata"
 version = "1.0.1"
 description = "A tool to facilitate standard and adaptive sampling."
+
 license = "BSD 3-Clause License"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
