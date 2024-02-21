@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-# v1.0.1
-
-Documentation
--------------
-
-- Minor documentation fix updating links to tutorial notebooks 
-=======
 # v1.0.2
 
 # Release Notes
@@ -37,4 +29,3 @@ This release is a minor release with a few bux fixes and new features. We encour
 ### Description
 
 This release is a minor release with a few bux fixes and new features. We encourage users to upgrade.
->>>>>>> origin/develop

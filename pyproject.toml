@@ -2,11 +2,8 @@
 [tool.poetry]
 name = "trata"
 version = "1.0.1"
-<<<<<<< HEAD
-description = "A tool to facilitate standard and adaptive Bayesian sampling."
-=======
 description = "A tool to facilitate standard and adaptive sampling."
->>>>>>> origin/develop
+
 license = "BSD 3-Clause License"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -22,11 +19,7 @@ authors = [
     "Andrew Fillmore <fillmore1@llnl.gov>", "Andrew Fillmore",
 ]
 maintainers = [
-<<<<<<< HEAD
-    "Sarah El-Jurf <eljurf1@llnl.gov>", "Sarah El-Jurf",
-=======
     "Renee Olson <olson59@llnl.gov>", "Renee Olson",
->>>>>>> origin/develop
 ]
 readme = "README.md"
 packages = [
@@ -41,11 +34,7 @@ scipy = "*"
 matplotlib = "*"
 
 [tool.poetry.dev-dependencies]
-<<<<<<< HEAD
-furo = "*"
-=======
 sphinx_rtd_theme = "*"
->>>>>>> origin/develop
 sphinx = "*"
 pytest = "*"
 nbconvert = "*"
