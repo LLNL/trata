@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "trata"
-version = "1.0.1"
+version = "1.1"
 description = "A tool to facilitate standard and adaptive sampling."
 
 license = "BSD 3-Clause License"
@@ -32,6 +32,8 @@ numpy = "*"
 scikit-learn = "*"
 scipy = "*"
 matplotlib = "*"
+kosh = "*"
+h5py = "*"
 
 [tool.poetry.dev-dependencies]
 sphinx_rtd_theme = "*"
@@ -58,7 +60,7 @@ build-backend = "poetry.core.masonry.api"
 line-length = 79
 
 [tool.bumpver]
-current_version = "1.0.1"
+current_version = "1.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true

@@ -3,16 +3,21 @@
 
 Trata offers a large number of general sampling strategies that can be used to explore parameter spaces or improve a model's predictive ability.
 
-Trata contains 3 modules:
+Trata contains 4 modules:
    - **`composite_samples`**
+   - **`kosh_sampler`**
    - **`sampler`**
-   - **`adaptive_samples`**<br>
+   - **`adaptive_sampler`**<br>
 
 <br>
 
 ## `composite_samples`
 
-The **`composite_samples`** module enables a user to parse a tab or csv file and create a "variable", or parameter, class object that represents discrete discrete-ordered, or continuous samples. The `parse_file` function returns a _`Samples`_ object containing the points from the file. Other file types would need to be parsed with a custom function. 
+The **`composite_samples`** module enables a user to parse a tab or csv file and create a "variable", or parameter, class object that represents discrete discrete-ordered, or continuous samples. The `parse_file` function returns a _`Samples`_ object containing the points from the file. Other file types would need to be parsed with a custom function.
+
+## `kosh_sampler`
+
+The **`kosh_samples`** module allows a user to create sample sets from Kosh datasets using discrete sampling methods. To learn more about Kosh, please visit their [GitHub](https://github.com/LLNL/kosh).
 
 ## `sampler`
 
@@ -35,7 +40,7 @@ The **`sampler`** module enables a user to select the type of sampling method th
    - `UserValue` <br>
 <br>
 
-## `adaptive_samples`
+## `adaptive_sampler`
 
 The number of samples required to build an accurate surrogate model is _a posteriori_ knowledge determined by the complexity of the approximated input-output relation. Therefore enriching the training dataset as training progresses is performed and is known as active learning. 
 
@@ -47,6 +52,8 @@ The **`adaptive_sampler`** module allows a user to specify learning functions to
    - `ExpectedImprovement`
    - `LearningExpectedImprovement`<br>
 <br>
+
+
 
 ## Getting Started
 
@@ -69,13 +76,14 @@ import sys
 sys.path.append(path_to_trata_repo)
 ```
 ## Documentation
+The Trata [documentation](https://llnl-trata.readthedocs.io/en/latest/). 
+
 The documentation can be built from the `docs` directory using:
 
 ```bash
 make html
 ```
 
-Read the Docs coming soon.
 
 ## Contact Info
 

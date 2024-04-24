@@ -1,10 +1,21 @@
-# v1.0.2
+# 1.0.3
 
 # Release Notes
 
+* [1.0.3](#103-release)
 * [1.0.2](#102-release)
 * [1.0.1](#101-release)
 
+
+## 1.1 Release
+
+### Description
+
+This release introduces a new feature. We encourage users to upgrade.
+
+### New in this release
+
+* Added a Kosh sampler to enable sampling with Kosh datasets.
 
 ## 1.0.2 Release
 
