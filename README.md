@@ -1,16 +1,13 @@
 ![](./logo.png)
- # Trata Bayesian Sampling
+ # Trata Sampling Methods Package
 
-In creating a surrogate model, generating initial training data requires the selection of samples from the design parameter spaces. Trata is used to generate sample points in order to explore a parameter space. 
-
-For instance, if a simulation takes two inputs, x and y, and you want to run a set of simulations with x-values between 5 and 20 and y-values between 0.1 and 1000, the sampling component can generate sample points (in this case (x,y) pairs) for you. 
-
-You can specify how many total sample points you want, and how you want them to be chosen--Trata offers a large number of different sampling strategies. If, on the other hand, you already have sample points you wish to use, Trata can simply read them in from a file. 
+Trata offers a large number of general sampling strategies that can be used to explore parameter spaces or improve a model's predictive ability.
 
 Trata contains 3 modules:
    - **`composite_samples`**
    - **`sampler`**
    - **`adaptive_samples`**<br>
+
 <br>
 
 ## `composite_samples`
@@ -71,14 +68,41 @@ Alternatively, add the path to this repo to your PYTHONPATH environment variable
 import sys
 sys.path.append(path_to_trata_repo)
 ```
+## Documentation
+The documentation can be built from the `docs` directory using:
+
+```bash
+make html
+```
+
+Read the Docs coming soon.
+
 ## Contact Info
 
-Trata maintainer can be reached at: eljurf1@llnl.gov
+Trata maintainer can be reached at: olson59@llnl.gov
 
 ## Contributing
 
-Contributions should be submitted as a pull request pointing to the develop branch, and must pass Trata's CI process; to run the same checks locally, use:
+Contributing to Trata is relatively easy. Just send us a pull request. When you send your request, make develop the destination branch on the Trata repository.
+
+Your PR must pass Trata's unit tests and documentation tests, and must be PEP 8 compliant. We enforce these guidelines with our CI process. To run these tests locally, and for helpful tips on git, see our [Contribution Guide](.github/workflows/CONTRIBUTING.md).
+
+Trata's `develop` branch has the latest contributions. Pull requests should target `develop`, and users who want the latest package versions, features, etc. can use `develop`.
+
+
+Contributions should be submitted as a pull request pointing to the `develop` branch, and must pass Trata's CI process; to run the same checks locally, use:
 
 ```bash
 pytest tests/test_*.py
 ```
+
+## Releases
+See our [change log](CHANGELOG.md) for more details.
+
+## Code of Conduct
+Please note that Trata has a [Code of Conduct](.github/workflows/CODE_OF_CONDUCT.md). By participating in the Trata community, you agree to abide by its rules.
+
+## License
+Trata is distributed under the terms of the MIT license. All new contributions must be made under the MIT license. See LICENSE and NOTICE for details.
+
+LLNL-CODE-838977

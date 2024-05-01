@@ -6,11 +6,11 @@ TRATA_ENV := $(if $(TRATA_ENV),$(TRATA_ENV),trata_env)
  
 CI_UTILS = /usr/workspace/weave/ci_utils
 
-PYTHON_CMD = /usr/tce/packages/python/python-3.8.2/bin/python3
+PYTHON_CMD = /usr/tce/bin/python3
 
 PIP_OPTIONS = --trusted-host wci-repo.llnl.gov --index-url https://wci-repo.llnl.gov/repository/pypi-group/simple --use-pep517
 
-DOCS_PKGS = sphinx nbsphinx nbconvert sphinx-rtd-theme
+DOCS_PKGS = sphinx nbsphinx nbconvert furo
 
 define create_env
 	# call from the directory where env will be created
