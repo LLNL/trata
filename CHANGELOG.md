@@ -1,20 +1,10 @@
-# 1.0.3
+# v1.0.2
 
 # Release Notes
 
-* [1.0.3](#103-release)
 * [1.0.2](#102-release)
 * [1.0.1](#101-release)
 
-## 1.0.3 Release
-
-### Description
-
-This release is a minor release with a few bux fixes and new features. We encourage users to upgrade.
-
-### New in this release
-
-Fixed iterating over empty samples in composite_samples to avoid infinite loop.
 
 ## 1.0.2 Release
 
