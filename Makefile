@@ -41,7 +41,7 @@ endef
 .PHONY: create_env
 create_env:
 	@echo "Create venv for running trata...$(WORKSPACE)";
-	@[ -d $(WORKSPACE) ] || mkdir -p $(WORKSPACE);
+	mkdir -p $(WORKSPACE);
 	cd $(WORKSPACE);
 	if [ -d $(TRATA_ENV) ]; then \
 	  rm -rf $(TRATA_ENV); \
