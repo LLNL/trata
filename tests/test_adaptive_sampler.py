@@ -15,6 +15,7 @@ def helper_function(np_input):
     out = np.sin(np_input[:, 0]) + np.cos(np_input[:, 1])
     return out.reshape(-1, 1)
 
+
 ls_test_box = [[-7.0, 9.0], [-2.0, 10.0]]
 np_train_input, y = make_blobs(n_samples=50, centers=3, n_features=2, random_state=3)
 
@@ -23,6 +24,7 @@ surrogate_model = gpr().fit(np_train_input, np_train_output)
 np_candidate_points = trata.sampler.LatinHyperCubeSampler.sample_points(num_points=50,
                                                                         box=ls_test_box,
                                                                         seed=2019)
+
 
 def test_ActiveLearningSampler_valid():
     np_actual_values = trata.adaptive_sampler. \
@@ -37,19 +39,21 @@ def test_ActiveLearningSampler_valid():
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
 
+
 def test_ActiveLearningSampler_invalid():
     # num_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.ActiveLearningSampler.sample_points,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model)
+                  cand_points=np_candidate_points,
+                  model=surrogate_model)
     # cand_points or box/num_cand_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.ActiveLearningSampler.sample_points,
-                      num_points=5,
-                      model=surrogate_model)
+                  num_points=5,
+                  model=surrogate_model)
     # model not given
     pytest.raises(TypeError, trata.adaptive_sampler.ActiveLearningSampler.sample_points,
-                      num_points=5,
-                      num_cand_points=np_candidate_points)
+                  num_points=5,
+                  num_cand_points=np_candidate_points)
+
 
 def test_DeltaSampler_valid():
     np_actual_values = trata.adaptive_sampler. \
@@ -66,37 +70,39 @@ def test_DeltaSampler_valid():
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
 
+
 def test_DeltaSampler_invalid():
     # num_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.DeltaSampler.sample_points,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  X=np_train_input,
+                  Y=np_train_output)
     # cand_points or box/num_cand_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.DeltaSampler.sample_points,
-                      num_points=5,
-                      model=surrogate_model,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  num_points=5,
+                  model=surrogate_model,
+                  X=np_train_input,
+                  Y=np_train_output)
     # model not given
     pytest.raises(TypeError, trata.adaptive_sampler.DeltaSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  X=np_train_input,
+                  Y=np_train_output)
     # X not given
     pytest.raises(TypeError, trata.adaptive_sampler.DeltaSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      Y=np_train_output)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  Y=np_train_output)
     # Y not given
     pytest.raises(TypeError, trata.adaptive_sampler.DeltaSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      X=np_train_input)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  X=np_train_input)
+
 
 def test_ExpectedImprovementSampler_valid():
     np_actual_values = trata.adaptive_sampler. \
@@ -113,37 +119,39 @@ def test_ExpectedImprovementSampler_valid():
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
 
+
 def test_ExpectedImprovementSampler_invalid():
     # num_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.ExpectedImprovementSampler.sample_points,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  X=np_train_input,
+                  Y=np_train_output)
     # cand_points or box/num_cand_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.ExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      model=surrogate_model,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  num_points=5,
+                  model=surrogate_model,
+                  X=np_train_input,
+                  Y=np_train_output)
     # model not given
     pytest.raises(TypeError, trata.adaptive_sampler.ExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  X=np_train_input,
+                  Y=np_train_output)
     # X not given
     pytest.raises(TypeError, trata.adaptive_sampler.ExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      Y=np_train_output)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  Y=np_train_output)
     # Y not given
     pytest.raises(TypeError, trata.adaptive_sampler.ExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      X=np_train_input)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  X=np_train_input)
+
 
 def test_LearningExpectedImprovementSampler_valid():
     np_actual_values = trata.adaptive_sampler. \
@@ -160,34 +168,35 @@ def test_LearningExpectedImprovementSampler_valid():
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
 
+
 def test_LearningExpectedImprovementSampler_invalid():
     # num_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.LearningExpectedImprovementSampler.sample_points,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  X=np_train_input,
+                  Y=np_train_output)
     # cand_points or box/num_cand_points not given
     pytest.raises(TypeError, trata.adaptive_sampler.LearningExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      model=surrogate_model,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  num_points=5,
+                  model=surrogate_model,
+                  X=np_train_input,
+                  Y=np_train_output)
     # model not given
     pytest.raises(TypeError, trata.adaptive_sampler.LearningExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      X=np_train_input,
-                      Y=np_train_output)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  X=np_train_input,
+                  Y=np_train_output)
     # X not given
     pytest.raises(TypeError, trata.adaptive_sampler.LearningExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      Y=np_train_output)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  Y=np_train_output)
     # Y not given
     pytest.raises(TypeError, trata.adaptive_sampler.LearningExpectedImprovementSampler.sample_points,
-                      num_points=5,
-                      cand_points=np_candidate_points,
-                      model=surrogate_model,
-                      X=np_train_input)
+                  num_points=5,
+                  cand_points=np_candidate_points,
+                  model=surrogate_model,
+                  X=np_train_input)
