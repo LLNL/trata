@@ -29,10 +29,10 @@ def test_ActiveLearningSampler_valid():
         ActiveLearningSampler.sample_points(num_points=5,
                                             cand_points=np_candidate_points,
                                             model=surrogate_model)
-    np_expected_values = [[-6.983927383565486, 7.2401358376235265]
-                          [-3.9445248702879296, 9.70869629305285]
-                          [-5.305982276357915, 8.239955581495817]
-                          [7.798240204471682, 0.3501770869725567]
+    np_expected_values = [[-6.983927383565486, 7.2401358376235265],
+                          [-3.9445248702879296, 9.70869629305285],
+                          [-5.305982276357915, 8.239955581495817],
+                          [7.798240204471682, 0.3501770869725567],
                           [-4.165945669390727, 9.93303611553577]]
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
@@ -58,10 +58,10 @@ def test_DeltaSampler_valid():
                                    model=surrogate_model,
                                    X=np_train_input,
                                    Y=np_train_output)
-    np_expected_values = [[6.713400984317753, 3.01647745081449]
-                          [7.798240204471682, 0.3501770869725567]
-                          [1.1646502174706903, 9.06599351329055]
-                          [0.2925519459646324, 8.854669731054763]
+    np_expected_values = [[6.713400984317753, 3.01647745081449],
+                          [7.798240204471682, 0.3501770869725567],
+                          [1.1646502174706903, 9.06599351329055],
+                          [0.2925519459646324, 8.854669731054763],
                           [-0.7792055024578879, 8.558647821903405]]
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
@@ -105,10 +105,10 @@ def test_ExpectedImprovementSampler_valid():
                                                  model=surrogate_model,
                                                  X=np_train_input,
                                                  Y=np_train_output)
-    np_expected_values = [[6.713400984317753, 3.01647745081449]
-                          [7.798240204471682, 0.3501770869725567]
-                          [1.1646502174706903, 9.06599351329055]
-                          [0.2925519459646324, 8.854669731054763]
+    np_expected_values = [[6.713400984317753, 3.01647745081449],
+                          [7.798240204471682, 0.3501770869725567],
+                          [1.1646502174706903, 9.06599351329055],
+                          [0.2925519459646324, 8.854669731054763],
                           [-0.7792055024578879, 8.558647821903405]]
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
@@ -152,10 +152,10 @@ def test_LearningExpectedImprovementSampler_valid():
                                                          model=surrogate_model,
                                                          X=np_train_input,
                                                          Y=np_train_output)
-    np_expected_values = [[6.713400984317753, 3.01647745081449]
-                          [7.798240204471682, 0.3501770869725567]
-                          [1.1646502174706903, 9.06599351329055]
-                          [0.2925519459646324, 8.854669731054763]
+    np_expected_values = [[6.713400984317753, 3.01647745081449],
+                          [7.798240204471682, 0.3501770869725567],
+                          [1.1646502174706903, 9.06599351329055],
+                          [0.2925519459646324, 8.854669731054763],
                           [-0.7792055024578879, 8.558647821903405]]
 
     np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
