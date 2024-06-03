@@ -7,15 +7,14 @@
 * [1.0.1](#101-release)
 
 
-## 1.1 Release
+## 1.0.3 Release
 
-### Description
+This is a minor release with a few bug fixes.
 
-This release introduces a new feature. We encourage users to upgrade.
-
-### New in this release
-
-* Added a Kosh sampler to enable sampling with Kosh datasets.
+### Bug fixes
+* fixed adaptive sampling tests to be more robust to numpy versions.
+* fixed hanging problem in composite samples.
+* A few other minor changes related to testing
 
 ## 1.0.2 Release
 

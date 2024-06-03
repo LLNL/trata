@@ -218,15 +218,10 @@ class Samples(object):
         self.ls_variables_order = []
 
     def __iter__(self):
-        index = 0
-        while True:
-            try:
-                val = {var: self.get_points(var)[index][0] for var in self.ls_variables_order}
-                index += 1
-            except IndexError:
-                return
-            else:
-                yield val
+        if not self.ls_variables_order:
+            return
+        for point in self.get_points(self.ls_variables_order):
+            yield {var: el for var, el in zip(self.ls_variables_order, point)}
 
     def __repr__(self):
         return '\n'.join([str(var) for var in self.get_variables()])
@@ -438,7 +433,7 @@ class Samples(object):
             else:
                 raise Exception('Variable "{}" was neither Continuous nor Discrete'.format(var_name))
 
-        return {'variables':dt}
+        return {'variables': dt}
 
     def _get_attr(self, variable, func):
 
