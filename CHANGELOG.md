@@ -1,10 +1,20 @@
-# v1.0.2
+# 1.0.3
 
 # Release Notes
 
+* [1.0.3](#103-release)
 * [1.0.2](#102-release)
 * [1.0.1](#101-release)
 
+
+## 1.0.3 Release
+
+This is a minor release with a few bug fixes.
+
+### Bug fixes
+* fixed adaptive sampling tests to be more robust to numpy versions.
+* fixed hanging problem in composite samples.
+* A few other minor changes related to testing
 
 ## 1.0.2 Release
 
