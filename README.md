@@ -17,7 +17,12 @@ The **`composite_samples`** module enables a user to parse a tab or csv file and
 
 ## `kosh_sampler`
 
-The **`kosh_samples`** module allows a user to create sample sets from Kosh datasets using discrete sampling methods. To learn more about Kosh, please visit their [GitHub](https://github.com/LLNL/kosh).
+The **`kosh_samples`** module allows a user to easily interact with data from a Sina catalog. Based on the Kosh datasets and trained model, the adaptive sampling methods below will choose the next best samples for the model.
+   - `Delta`
+   - `ExpectedImprovement`
+   - `LearningExpectedImprovement`<br>
+
+To learn more about Kosh, please visit their [GitHub](https://github.com/LLNL/kosh).
 
 ## `sampler`
 
@@ -45,10 +50,8 @@ The **`sampler`** module enables a user to select the type of sampling method th
 The number of samples required to build an accurate surrogate model is _a posteriori_ knowledge determined by the complexity of the approximated input-output relation. Therefore enriching the training dataset as training progresses is performed and is known as active learning. 
 
 The **`adaptive_sampler`** module allows a user to specify learning functions to help identify the next sample with the highest information value. Those learning functions are designed to allocate samples to regions where the surrogate model is thought to be inaccurate or uncertain, or the regions where particularly interesting combinations of design parameters lie, such as the region that possibly contains the globally optimum values of the design parameters. The available options include:
-   - `Scored`
-   - `Weighted`
    - `ActiveLearning`
-   - `Delta` 
+   - `Delta`
    - `ExpectedImprovement`
    - `LearningExpectedImprovement`<br>
 <br>
