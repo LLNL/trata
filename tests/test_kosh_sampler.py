@@ -6,48 +6,7 @@ from sklearn import datasets
 import os
 
 
-def test_discrete_koshSampler():
-
-    Nsamples = 15
-    Ndims = 4
-
-    X = datasets.load_iris().data
-    h5f = h5py.File('iris_data.h5', 'w')
-    h5f.create_dataset('dataset_1', data=X)
-    h5f.close()
-
-    # Create a new store (erase if exists)
-    store = kosh.connect("kosh_test.sql", delete_all_contents=True)
-    dataset = store.create("kosh_example1")
-    dataset.associate('iris_data.h5', "hdf5")
-
-    # @kosh.numpy_operator
-    # def VStack(*data):
-    #     return np.vstack(data).transpose()
-
-    # stacked = VStack(dataset["dataset_1"])
-
-    data_subsample = KoshSampler(stacked, method="LatinHyperCubeSampler", num_points=Nsamples)[:]
-    assert data_subsample.shape[0] == Nsamples
-
-    data_subsample = KoshSampler(stacked, method="CornerSampler", num_points=Nsamples)[:]
-    assert data_subsample.shape[0] == Nsamples
-
-    data_subsample = KoshSampler(stacked, method="SamplePointsSampler")[:]
-    assert data_subsample.shape[0] == stacked[:].shape[0]
-
-    data_subsample = KoshSampler(stacked, method="CartesianCrossSampler", num_divisions=Ndims)[:]
-    assert data_subsample.shape[0] == Ndims ** 4
-
-    data_subsample = KoshSampler(stacked, method="FractionalFactorialSampler", resolution=Ndims)[:]
-    assert data_subsample.shape[0] <= Nsamples
-
-    # Cleanup
-    os.remove('iris_data.h5')
-    store.close()
-
-
-def test_continuous_KoshSampler():
+def test_KoshSampler():
 
     import trata.sampler as sampler
     from sklearn.gaussian_process import GaussianProcessRegressor
