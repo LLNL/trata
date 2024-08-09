@@ -2,10 +2,21 @@
 
 # Release Notes
 
+* [1.1.0](#110-release)
 * [1.0.3](#103-release)
 * [1.0.2](#102-release)
 * [1.0.1](#101-release)
 
+
+## 1.1.0 Release
+
+### Description
+
+This release introduces a new kosh_sampler module
+
+### New in this release
+
+* The kosh_sampler module wraps the adaptive sampling functions in a Kosh operator. Users with existing Kosh datasets can easily find the next best set of samples based on their model's error or sensitivity. 
 
 ## 1.0.3 Release
 

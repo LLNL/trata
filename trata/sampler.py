@@ -50,6 +50,7 @@ class DiscreteSampler(_Sampler):
 
     @staticmethod
     def normalize_box(box, values):
+
         if box is None and values is None:
             raise TypeError("Must give at least one of 'box' and 'values'")
         if box is None:
