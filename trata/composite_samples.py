@@ -70,9 +70,10 @@ def parse_file(file_name, file_type='tab'):
                         value.append(token)
 
     elif file_type.lower() == 'csv':
+
         with open(file_name, 'r') as file_handle:
             reader = csv.reader(file_handle)
-
+            breakpoint()
             feature_names = next(reader)
 
             feature_values = []
