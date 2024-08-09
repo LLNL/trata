@@ -16,7 +16,6 @@ To create a set of 10 points using the latin hypercube strategy in the unit squa
    from trata.sampler import LatinHyperCubeSampler
    points = LatinHyperCubeSampler.sample_points(num_points=10, box=[[0, 1], [0, 1]])
 
-Full description of samplers and their arguments can be found in this `notebook <_static/Demostration_of_Samplers.html>`_.
 
 Composite Samples
 -----------------
@@ -24,14 +23,12 @@ Composite Samples
 A Composite Samples object makes it easier to generate more complicated sample sets. With it, you can specify a set of
 variables and sample using those variables multiple times.
 
-A full tutorial of the composite sampling component can be found in this `notebook <_static/Sampling_Documentation.html>`_.
 
 Kosh Sampler
 ------------
 
 A Kosh sampler object makes it easier to generate sample sets from exiting Kosh datasets. 
 
-A full tutorial of the Kosh sampling component can be found in this `notebook <_static/Kosh_Sampling_Documentation.html>`_.
 
 Examples
 --------

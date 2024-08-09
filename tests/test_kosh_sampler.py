@@ -29,22 +29,15 @@ def test_KoshSampler():
                                  string.digits, k=rand_n))
     fileName = 'data_' + str(res) + '.h5'
 
-    res = ''.join(random.choices(string.ascii_uppercase +
-                                 string.digits, k=rand_n))
-    fileName2 = 'data_' + str(res) + '.h5'
-
     h5f = h5py.File(fileName, 'w')
     h5f.create_dataset('inputs', data=starting_data.astype(np.float64))
-    h5f.close()
-
-    h5f = h5py.File(fileName2, 'w')
     h5f.create_dataset('outputs', data=starting_output.astype(np.float64))
     h5f.close()
 
     # Create a new store (erase if exists)
     store = kosh.connect("kosh_test.sql", delete_all_contents=True)
     dataset = store.create("kosh_example1")
-    dataset.associate([fileName, fileName2], "hdf5")
+    dataset.associate([fileName], "hdf5")
 
     num_points = 7
     ndim = starting_data.shape[1]
@@ -78,5 +71,4 @@ def test_KoshSampler():
 
     # Cleanup
     os.remove(fileName)
-    os.remove(fileName2)
     store.close()

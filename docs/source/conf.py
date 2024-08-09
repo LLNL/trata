@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath(__file__).rsplit(os.sep, 3)[0])
 # -- Project information -----------------------------------------------------
 
 project = 'Trata'
-copyright = '2023, Sarah El-Jurf, Keith Healy, Andrew Fillmore, David Domyancic, James Corbett'
-author = 'Sarah El-Jurf, Keith Healy, Andrew Fillmore, David Domyancic, James Corbett'
+copyright = 'Copyright (c) 2024, Lawrence Livermore National Security, LLC'
+author = 'Renee Olson, Sarah El-Jurf, Keith Healy, Andrew Fillmore, David Domyancic, James Corbett'
 
 # The full version, including alpha/beta/rc tags
 release = '1.1'

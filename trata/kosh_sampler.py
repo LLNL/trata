@@ -56,7 +56,7 @@ class KoshSampler(KoshOperator):
         super(KoshSampler, self).__init__(*args, **options)
         self.options = options
 
-    def operate(self, *inputs, **kargs):
+    def operate(self, *inputs, format=None):
 
         # Read in input kosh datasets into one numpy array
         data = inputs[0][:]
