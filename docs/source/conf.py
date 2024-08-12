@@ -22,7 +22,7 @@ copyright = 'Copyright (c) 2024, Lawrence Livermore National Security, LLC'
 author = 'Renee Olson, Sarah El-Jurf, Keith Healy, Andrew Fillmore, David Domyancic, James Corbett'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1'
+release = '1.1.0'
 
 # -- General configuration ---------------------------------------------------
 
