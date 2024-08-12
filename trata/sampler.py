@@ -50,6 +50,7 @@ class DiscreteSampler(_Sampler):
 
     @staticmethod
     def normalize_box(box, values):
+
         if box is None and values is None:
             raise TypeError("Must give at least one of 'box' and 'values'")
         if box is None:
@@ -1492,6 +1493,66 @@ class MorrisOneAtATimeSampler(ContinuousSampler):
             return x1 * B + x2 * (B ^ 1)
 
         return np.vstack([make_path() for _ in range(num_paths)])
+
+class SobolIndexSampler(ContinuousSampler):
+    """A sampler for creating sample sets for Sobol indices."""
+
+    name = "Sobol Indices"
+
+    @staticmethod
+    def sample_points(
+        num_points, box, include_second_order=False, scramble=True, seed=None, **kwargs
+    ):
+        """
+        Create a set of points for Sobol indices calculation
+
+        Produces a quasi-random set of points using scipy's qmc
+        If 'include_second_order' is False, there will be
+        2 ** num_points * (k + 2) rows.
+        If 'include_second_order' is True, there will be
+        2 ** num_points * (2k + 2) rows,
+        where k is the number of parameters.
+
+        Args:
+            - num_points (int): Log in base 2 of the number of sample points
+            - box ([[float]]): The bounding box
+            - include_second_order (bool): Whether to include second order indices
+            - scramble (bool): Whether to use scrambling in Sobol sequences
+            - seed (int): Random seed
+
+        Returns (numpy array):
+            - A two dimensional numpy array of sample points
+        """
+        k = len(box)
+        if not isinstance(num_points, int):
+            raise TypeError(f"num_points should be an int. Was given {type(num_points)}")
+
+        if scramble:
+            qmc_sampler = stats.qmc.Sobol(d=2 * k, scramble=True, seed=seed)
+        else:
+            qmc_sampler = stats.qmc.Sobol(d=2 * k, scramble=False)
+
+        qmc_sample = qmc_sampler.random_base2(m=num_points)
+        l_bounds = [lb[0] for lb in box] * 2
+        u_bounds = [ub[1] for ub in box] * 2
+        sobol_points = stats.qmc.scale(qmc_sample, l_bounds, u_bounds)
+
+        A = sobol_points[:, :k]
+        B = sobol_points[:, -k:]
+        M = np.append(A, B, axis=0)
+
+        for i in range(k):
+            AB_i = A.copy()
+            AB_i[:, i] = B[:, i]
+            M = np.append(M, AB_i, axis=0)
+
+        if include_second_order:
+            for i in range(k):
+                BA_i = B.copy()
+                BA_i[:, i] = A[:, i]
+                M = np.append(M, BA_i, axis=0)
+
+        return M
 
 
 class DakotaSampler(ContinuousSampler):

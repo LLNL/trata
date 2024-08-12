@@ -1087,6 +1087,149 @@ def test_MultiNormalSampler_invalid():
                                      [0.2, 1.0, 0.6],
                                      [0.4, 0.3, 1.0]])
 
+def test_FractionalFactorial_valid():
+    ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
+    ls_test_values2 = [['a','b','c'],[1,2,3],[6,7,8]]
+
+    np.random.seed(3)
+    np_actual_values = trata.sampler.FractionalFactorialSampler.sample_points(box=ls_test_box,
+                                                                              resolution=3,
+                                                                              fraction=None)
+
+    np_expected_values = [[25.0, 0.0, -25.0],
+                          [25.0, -25.0, 25.0],
+                          [0.0, -25.0, -25.0],
+                          [0.0, 0.0, 25.0]]
+    np.testing.assert_array_equal(np_actual_values, np_expected_values)
+
+    np.random.seed(3)
+    np_actual_values = trata.sampler.FractionalFactorialSampler.sample_points(box=ls_test_box,
+                                                                              resolution=None,
+                                                                              fraction=1)
+    np_expected_values = [[25.0, 0.0, -25.0],
+                          [25.0, -25.0, 25.0],
+                          [0.0, -25.0, -25.0],
+                          [0.0, 0.0, 25.0]]
+    np.testing.assert_array_equal(np_actual_values, np_expected_values)
+
+    np.random.seed(3)
+    np_actual_values = trata.sampler.FractionalFactorialSampler.sample_points(values=ls_test_values2,
+                                                                              resolution=3,
+                                                                              fraction=None)
+    np_expected_values = np.array([['c', 3, 6],
+                                   ['c', 1, 8],
+                                   ['a', 1, 6],
+                                   ['a', 3, 8]], dtype=object)
+    np.testing.assert_array_equal(np_actual_values, np_expected_values)
+
+    np.random.seed(3)
+    np_actual_values = trata.sampler.FractionalFactorialSampler.sample_points(values=ls_test_values2,
+                                                                              resolution=None,
+                                                                              fraction=1)
+    np_expected_values = np.array([['c', 3, 6],
+                                   ['c', 1, 8],
+                                   ['a', 1, 6],
+                                   ['a', 3, 8]], dtype=object)
+    np.testing.assert_array_equal(np_actual_values, np_expected_values)
+
+def test_FractionalFactorial_invalid():
+    ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
+    # neither box nor values given
+    pytest.raises(TypeError, trata.sampler.FractionalFactorialSampler.sample_points)
+    # box not list
+    pytest.raises(TypeError, trata.sampler.FractionalFactorialSampler.sample_points,
+                  box=1.5)
+    # neither resolution nor fraction given
+    pytest.raises(ValueError, trata.sampler.FractionalFactorialSampler.sample_points,
+                  box=ls_test_box)
+    # wrong resolution
+    pytest.raises(ValueError, trata.sampler.FractionalFactorialSampler.sample_points,
+                  box=ls_test_box, resolution=5)
+    # wrong fraction
+    pytest.raises(ValueError, trata.sampler.FractionalFactorialSampler.sample_points,
+                  box=ls_test_box, fraction=5)
+    # wrong dim, resolution, fraction combination
+    pytest.raises(ValueError, trata.sampler.FractionalFactorialSampler.sample_points,
+                  box=ls_test_box, resolution=3, fraction=3)
+
+def test_MorrisOneAtATimeSampler_valid():
+    ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
+
+    np_actual_values = trata.sampler.MorrisOneAtATimeSampler.sample_points(box=ls_test_box,
+                                                                           seed=3)
+    np_expected_values = [[  2.35321606, -14.17182649,  -1.04743509,],
+                          [  2.35321606, -14.17182649,   4.1081018 ,],
+                          [  2.35321606,  -4.96813837,   4.1081018 ,],
+                          [  5.92026266,  -4.96813837,   4.1081018 ]]
+
+    np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
+
+def test_MorrisOneAtATimeSampler_invalid():
+    ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
+    # box not given
+    pytest.raises(TypeError, trata.sampler.MorrisOneAtATimeSampler.sample_points,
+                  seed=3)
+    # box not list
+    pytest.raises(IndexError, trata.sampler.MorrisOneAtATimeSampler.sample_points,
+                  box=39.4, seed=3)
+    # num paths not int
+    pytest.raises(TypeError, trata.sampler.MorrisOneAtATimeSampler.sample_points,
+                  box=ls_test_box, num_paths=4.7, seed=3)
+
+def test_SobolIndexSampler_valid():
+    ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
+
+    np_actual_values = trata.sampler.SobolIndexSampler.sample_points(num_points=1,
+                                                                     box=ls_test_box,
+                                                                     include_second_order=False,
+                                                                     seed=3)
+    np_expected_values = np.array([[ 17.48514699, -11.6326934 ,  -3.98390363],
+                                   [ 10.52434819, -17.34999695,   1.84928672],
+                                   [  9.68860264, -14.06343186,  -0.59200223],
+                                   [ 21.25512224, -12.39403856,  23.994359  ],
+                                   [  9.68860264, -11.6326934 ,  -3.98390363],
+                                   [ 21.25512224, -17.34999695,   1.84928672],
+                                   [ 17.48514699, -14.06343186,  -3.98390363],
+                                   [ 10.52434819, -12.39403856,   1.84928672],
+                                   [ 17.48514699, -11.6326934 ,  -0.59200223],
+                                   [ 10.52434819, -17.34999695,  23.994359  ]])
+    np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
+
+    np_actual_values = trata.sampler.SobolIndexSampler.sample_points(num_points=1,
+                                                                     box=ls_test_box,
+                                                                     include_second_order=True,
+                                                                     seed=3)
+    np_expected_values = np.array([[ 17.48514699, -11.6326934 ,  -3.98390363],
+                                   [ 10.52434819, -17.34999695,   1.84928672],
+                                   [  9.68860264, -14.06343186,  -0.59200223],
+                                   [ 21.25512224, -12.39403856,  23.994359  ],
+                                   [  9.68860264, -11.6326934 ,  -3.98390363],
+                                   [ 21.25512224, -17.34999695,   1.84928672],
+                                   [ 17.48514699, -14.06343186,  -3.98390363],
+                                   [ 10.52434819, -12.39403856,   1.84928672],
+                                   [ 17.48514699, -11.6326934 ,  -0.59200223],
+                                   [ 10.52434819, -17.34999695,  23.994359  ],
+                                   [ 17.48514699, -14.06343186,  -0.59200223],
+                                   [ 10.52434819, -12.39403856,  23.994359  ],
+                                   [  9.68860264, -11.6326934 ,  -0.59200223],
+                                   [ 21.25512224, -17.34999695,  23.994359  ],
+                                   [  9.68860264, -14.06343186,  -3.98390363],
+                                   [ 21.25512224, -12.39403856,   1.84928672]])
+
+    np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
+
+def test_SobolIndexSampler_invalid():
+    ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
+
+    # required arguments not given
+    pytest.raises(TypeError, trata.sampler.SobolIndexSampler.sample_points, seed=3)
+    # num_points is wrong type
+    pytest.raises(TypeError, trata.sampler.SobolIndexSampler.sample_points, 
+                  num_points=2.2, box=ls_test_box)
+    # box is not list
+    pytest.raises(TypeError, trata.sampler.SobolIndexSampler.sample_points,
+                  num_points=1, box=3)
+
 # @pytest.mark.xfail
 def test_FaceSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]

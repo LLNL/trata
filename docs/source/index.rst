@@ -18,10 +18,11 @@ If, on the other hand, you already have sample points you wish to use,
 the component can simply read them in from a file.
 
 
-The ``trata`` package works with Python 3 and is made up of 3 modules:
+The ``trata`` package works with Python 3 and is made up of 4 modules:
    * ``sampler``
    * ``composite_samples``
-   * ``adaptive_samples``
+   * ``adaptive_sampler``
+   * ``kosh_sampler``
 
 Installation:
 
@@ -43,6 +44,7 @@ Demo usage:
    sampler
    composite_sampling
    adaptive_sampling
+   kosh_sampling
 
 Indices and tables
 ==================
