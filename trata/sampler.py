@@ -60,11 +60,11 @@ class DiscreteSampler(_Sampler):
 
         new_box = []
         for i, (box_el, values_el) in enumerate(zip(box, values)):
-            if box_el != [] and values_el == []:
+            if len(box_el) != 0 and len(values_el) == 0:
                 new_box.append(box_el)
-            elif box_el == [] and values_el != []:
+            elif len(box_el) == 0 and len(values_el) != 0:
                 new_box.append([0.0, 1.0])
-            elif box_el == [] and values_el == []:
+            elif len(box_el) == 0 and len(values_el) == 0:
                 raise ValueError("Either box or values must be specified. Neither found in dimension {}".format(i))
             else:
                 raise ValueError("Only one of box or values can be specified. Found both in dimension {}".format(i))
@@ -81,9 +81,9 @@ class DiscreteSampler(_Sampler):
         points = points.astype('O')
         for i, point in enumerate(points):
             for j, (dim, box_el, values_el) in enumerate(zip(point, box, values)):
-                if box_el != [] and values_el == []:
+                if len(box_el) != 0 and len(values_el) == 0:
                     pass
-                elif box_el == [] and values_el != []:
+                elif len(box_el) == 0 and len(values_el) != 0:
                     len_values_el = float(len(values_el))
                     for k, value in enumerate(values_el):
                         if (k / len_values_el) <= dim <= ((k + 1) / len_values_el):
