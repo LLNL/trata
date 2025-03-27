@@ -15,14 +15,12 @@ DOCS_PKGS = sphinx nbsphinx nbconvert furo
 define create_env
 	# call from the directory where env will be created
 	# arg1: name of env
-	$(PYTHON_CMD) -m venv $1
+	if [ -d $1 ]; then rm -Rf $1; fi
+	/usr/apps/weave/tools/create_venv.sh -p cpu -e $1 -v latest-develop
 	source $1/bin/activate && \
-	which pip && \
-	pip install $(PIP_OPTIONS) --upgrade pip && \
-	pip install $(PIP_OPTIONS) --force pytest && \
-	pip install $(PIP_OPTIONS) . && \
-	pip list && \
-	echo "Test environment is created: $1"
+	pip install . && \
+	which pytest && \
+	pip list
 endef
 
 define run_trata_tests
