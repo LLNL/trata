@@ -1,12 +1,20 @@
-# 1.0.3
-
 # Release Notes
 
+* [1.1.1](#111-release)
 * [1.1.0](#110-release)
 * [1.0.3](#103-release)
 * [1.0.2](#102-release)
 * [1.0.1](#101-release)
 
+## 1.1.1 Release
+
+### Description
+
+This release includes a minor bug fix.
+
+### Bug fixes
+
+* In the `sampler` module, checking for empty lists was fixed.
 
 ## 1.1.0 Release
 
