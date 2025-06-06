@@ -39,8 +39,11 @@ class ScoredSampler(AdaptiveSampler):
         # Generate candidate points using LHS
         elif 'num_cand_points' in kwargs and kwargs['num_cand_points'] is not None:
             i_num_candidates = int(kwargs['num_cand_points'])
-            ls_box = kwargs['box']
-            np_candidate_points = sampler.LatinHyperCubeSampler.sample_points(num_points=i_num_candidates, box=ls_box)
+            ls_box = kwargs.get("box", None)
+            seed = kwargs.get("seed", None)
+            np_candidate_points = sampler.LatinHyperCubeSampler.sample_points(num_points=i_num_candidates,
+                                                                              box=ls_box,
+                                                                              seed=seed)
             kwargs['cand_points'] = np_candidate_points
 
         else:
@@ -108,7 +111,7 @@ class ActiveLearningSampler(ScoredSampler):
     name = "Active Learning"
 
     @staticmethod
-    def sample_points(num_points, model, num_cand_points=None, box=None, cand_points=None, **kwargs):
+    def sample_points(num_points, model, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Creates a set of sample points based on the standard deviation of the surrogate model.
 
@@ -153,13 +156,85 @@ class ActiveLearningSampler(ScoredSampler):
         return np_candidate_sigma.flatten()
 
 
+class BestCandidateSampler(ScoredSampler):
+    """Returns the best additional samples to fill in the feature space."""
+
+    name = "Best-Candidate"
+
+    @staticmethod
+    def sample_points(num_points, X, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
+        """
+        Create a set of points to add to existing input data based on distance.
+
+        Args:
+            - num_points (int): The number of sample points to return (required)
+            - values (numpy array): The existing samples
+            - num_cand_points (int): The number of candidate points to generate (optional)
+            - box ([[float]]): The bounding box of the candidate points (optional)
+            - cand_points ([[float]]): The set of candidate points
+
+        Returns (numpy array):
+            - A two dimensional numpy array of sample points
+        """
+        return super(BestCandidateSampler, BestCandidateSampler).sample_points(num_points=num_points,
+                                                                               X=X,
+                                                                               num_cand_points=num_cand_points,
+                                                                               box=box,
+                                                                               cand_points=cand_points,
+                                                                               seed=seed)
+
+    def _get_score(**kwargs):
+        """
+        Score for each point is the delta relative to the nearest neighbor.
+
+        For each point returns the difference between its output and the output of its nearest neighbor.
+
+        Args:
+            - kwargs:
+                * model (Surrogate Model): The trained surrogate model
+                * cand_points ([[float]]): The set of candidate points
+                * X (numpy array): The input points for training 'model'
+                * Y (numpy array): The output points for training 'model'
+
+        Returns ([float]):
+            - Array of scores
+        """
+        from sklearn.neighbors import NearestNeighbors
+
+        np_candidate_points = kwargs['cand_points']
+        np_x = kwargs['X']
+        ranges = kwargs['box']
+
+        # Check number of features matches the ranges
+        num_features = np_x.shape[1]
+
+        if ranges is not None:
+            if len(ranges) != num_features:
+                msg = "The number of ranges must match the number of features in existing_data."
+                msg += f"You have {len(ranges)} ranges and {num_features} features."
+                raise ValueError(msg)
+
+        # Determine the number of nearest neighbors (use 3 or fewer if not enough existing samples).
+        n_neighbors = min(3, np_x.shape[0])
+
+        # Use NearestNeighbors to compute distances to the existing dataset.
+        nbrs = NearestNeighbors(n_neighbors=n_neighbors)
+        nbrs.fit(np_x)
+        distances, _ = nbrs.kneighbors(np_candidate_points)
+
+        # Compute the average distance to the nearest neighbors for each candidate.
+        scores = np.mean(distances, axis=1)
+       
+        return scores
+
+
 class DeltaSampler(ScoredSampler):
     """A Sampler for adaptive sampling based on nearest neighbor delta"""
 
     name = "Delta"
 
     @staticmethod
-    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, **kwargs):
+    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Creates a set of sample points based on the delta of nearest neighbor outputs.
 
@@ -184,7 +259,8 @@ class DeltaSampler(ScoredSampler):
                                                                box=box,
                                                                cand_points=cand_points,
                                                                X=X,
-                                                               Y=Y)
+                                                               Y=Y,
+                                                               seed=seed)
 
     @staticmethod
     def _get_score(**kwargs):
@@ -241,7 +317,7 @@ class ExpectedImprovementSampler(ScoredSampler):
     name = "Expected Improvement"
 
     @staticmethod
-    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, **kwargs):
+    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Creates a set of sample points based on the ALM score and Delta score
 
@@ -266,7 +342,8 @@ class ExpectedImprovementSampler(ScoredSampler):
                                                                box=box,
                                                                cand_points=cand_points,
                                                                X=X,
-                                                               Y=Y)
+                                                               Y=Y,
+                                                               seed=seed)
 
     @staticmethod
     def _get_score(**kwargs):
@@ -297,7 +374,7 @@ class LearningExpectedImprovementSampler(ScoredSampler):
     name = "Learning Expected Improvement"
 
     @staticmethod
-    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, **kwargs):
+    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Creates a set of sample points based on learning the best relationship using the ALM score and Delta score
 
@@ -326,7 +403,8 @@ class LearningExpectedImprovementSampler(ScoredSampler):
                                                                        box=box,
                                                                        cand_points=cand_points,
                                                                        X=X,
-                                                                       Y=Y)
+                                                                       Y=Y,
+                                                                       seed=seed)
 
     @staticmethod
     def _get_score(**kwargs):
