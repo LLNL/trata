@@ -55,6 +55,37 @@ def test_ActiveLearningSampler_invalid():
                   num_cand_points=np_candidate_points)
 
 
+def test_BestCandidateSampler_valid():
+    # Testing with previously generated candidate points
+    np_actual_values = trata.adaptive_sampler. \
+      BestCandidateSampler.sample_points(num_points=5,
+                                         X=np_train_input,
+                                         cand_points=np_candidate_points)
+    np_expected_values = np.array([[-6.983927383565486, 7.2401358376235265],
+                                   [-5.305982276357915, 8.239955581495817],
+                                   [7.798240204471682, 0.3501770869725567],
+                                   [-3.9445248702879296, 9.70869629305285],
+                                   [-4.165945669390727, 9.93303611553577]])
+    np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
+    # Testing with generating candidate points
+    np_actual_values = trata.adaptive_sampler. \
+      BestCandidateSampler.sample_points(num_points=5,
+                                         num_cand_points=50,
+                                         box=ls_test_box,
+                                         X=np_train_input,
+                                         seed=2019)
+    np.testing.assert_array_almost_equal(np_actual_values, np_expected_values)
+
+
+def test_BestCandidateSampler_invalid():
+    # Number of ranges in box and number of features don't match
+    pytest.raises(ValueError, trata.adaptive_sampler.BestCandidateSampler.sample_points,
+                  num_points=5,
+                  X=np_train_input,
+                  num_cand_points=50,
+                  box=[[-7.0, 9.0], [-2.0, 10.0], [3.5, 7.8]])
+
+
 def test_DeltaSampler_valid():
     np_actual_values = trata.adaptive_sampler. \
         DeltaSampler.sample_points(num_points=5,
