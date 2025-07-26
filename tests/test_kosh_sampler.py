@@ -43,10 +43,24 @@ def test_KoshSampler():
     ndim = starting_data.shape[1]
 
     new_points = KoshSampler(dataset['inputs'],
+                             method='ActiveLearningSampler',
+                             num_points=7,
+                             model=model,
+                             num_cand_points=20,
+                             box=test_box)[:]
+    assert new_points.shape == (num_points, ndim)
+
+    new_points = KoshSampler(dataset['inputs'],
+                             method='BestCandidateSampler',
+                             num_points=7,
+                             box=test_box)[:]
+    assert new_points.shape == (num_points, ndim)
+
+    new_points = KoshSampler(dataset['inputs'],
                                           method='DeltaSampler',
                                           num_points=7,
                                           model=model,
-                                          Y=dataset['outputs'],
+                                          output=dataset['outputs'],
                                           num_cand_points=20,
                                           box=test_box)[:]
     assert new_points.shape == (num_points, ndim)
@@ -55,7 +69,7 @@ def test_KoshSampler():
                                           method='ExpectedImprovementSampler',
                                           num_points=7,
                                           model=model,
-                                          Y=dataset['outputs'],
+                                          output=dataset['outputs'],
                                           num_cand_points=20,
                                           box=test_box)[:]
     assert new_points.shape == (num_points, ndim)
@@ -64,7 +78,7 @@ def test_KoshSampler():
                                           method='LearningExpectedImprovementSampler',
                                           num_points=7,
                                           model=model,
-                                          Y=dataset['outputs'],
+                                          output=dataset['outputs'],
                                           num_cand_points=20,
                                           box=test_box)[:]
     assert new_points.shape == (num_points, ndim)
