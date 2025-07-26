@@ -450,7 +450,7 @@ class LearningExpectedImprovementSampler(ScoredSampler):
                                      bounds=((None, None), (0.0, None), (0.0, 1.0)))
 
         ALM_score = ActiveLearningSampler._get_score(model=model, cand_points=np_candidate_points)
-        delta_score = DeltaSampler._get_score(model=model, cand_points=np_candidate_points, X=np_values, Y=np_output)
+        delta_score = DeltaSampler._get_score(model=model, cand_points=np_candidate_points, values=np_values, output=np_output)
 
         min_index = np.argmin([result['fun'] for result in results])
 
@@ -481,7 +481,7 @@ class LearningExpectedImprovementSampler(ScoredSampler):
 
         for index in range(len(output)):
 
-            # Construct model leaving out npX[index] and npY[index]
+            # Construct model leaving out np_values[index] and np_output[index]
             left_out_point = values[index].reshape(1, -1)
             np_alt_values = np.delete(values, [index], 0)
 

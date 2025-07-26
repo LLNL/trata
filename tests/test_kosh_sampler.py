@@ -53,6 +53,7 @@ def test_KoshSampler():
     new_points = KoshSampler(dataset['inputs'],
                              method='BestCandidateSampler',
                              num_points=7,
+                             num_cand_points=20,
                              box=test_box)[:]
     assert new_points.shape == (num_points, ndim)
 

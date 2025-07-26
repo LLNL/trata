@@ -1,6 +1,6 @@
 import numpy as np
-from trata.adaptive_sampler import ActiveLearningSampler, DeltaSampler, \
-    ExpectedImprovementSampler, LearningExpectedImprovementSampler
+from trata.adaptive_sampler import ActiveLearningSampler, BestCandidateSampler, \
+    DeltaSampler, ExpectedImprovementSampler, LearningExpectedImprovementSampler
 from trata.composite_samples import *
 from kosh.operators.core import KoshOperator
 
@@ -117,12 +117,14 @@ class KoshSampler(KoshOperator):
 
         # Get output data as numpy array
         output = self.options.get("output", None)
-        output = np.array(output[:])
+        if output:
+            output = np.array(output[:])
 
         model = self.options.get("model", None)
         num_cand_points = self.options.get("num_cand_points", None)
         box = self.options.get("box", [[None]])
         cand_points = self.options.get("cand_points", None)
+        seed = self.options.get("seed", None)
 
         if method == 'ActiveLearningSampler':
             sample_object = ActiveLearningSampler.sample_points(num_points,
