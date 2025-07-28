@@ -1,6 +1,6 @@
 import numpy as np
-from trata.adaptive_sampler import ActiveLearningSampler, DeltaSampler, \
-    ExpectedImprovementSampler, LearningExpectedImprovementSampler
+from trata.adaptive_sampler import ActiveLearningSampler, BestCandidateSampler, \
+    DeltaSampler, ExpectedImprovementSampler, LearningExpectedImprovementSampler
 from trata.composite_samples import *
 from kosh.operators.core import KoshOperator
 
@@ -105,8 +105,9 @@ class KoshSampler(KoshOperator):
             else:
                 raise ValueError("Variable was not of type \'ContinuousVariable\'")
 
-        continuous_methods = ['DeltaSampler', 'ExpectedImprovementSampler',
-                             'LearningExpectedImprovementSampler']
+        continuous_methods = ['ActiveLearningSampler', 'BestCandidateSampler',
+                              'DeltaSampler', 'ExpectedImprovementSampler',
+                              'LearningExpectedImprovementSampler']
 
         method = self.options.get("method")
         num_points = self.options.get("num_points")
@@ -115,13 +116,31 @@ class KoshSampler(KoshOperator):
             raise TypeError("Must use continuous sampler on continuous variable")
 
         # Get output data as numpy array
-        Y = self.options.get("Y", None)
-        output = np.array(Y[:])
+        output = self.options.get("output", None)
+        if output:
+            output = np.array(output[:])
 
         model = self.options.get("model", None)
         num_cand_points = self.options.get("num_cand_points", None)
         box = self.options.get("box", [[None]])
         cand_points = self.options.get("cand_points", None)
+        seed = self.options.get("seed", None)
+
+        if method == 'ActiveLearningSampler':
+            sample_object = ActiveLearningSampler.sample_points(num_points,
+                                                                model,
+                                                                num_cand_points=num_cand_points,
+                                                                box=box,
+                                                                cand_points=cand_points,
+                                                                seed=seed)
+
+        if method == 'BestCandidateSampler':
+            sample_object = BestCandidateSampler.sample_points(num_points,
+                                                               values=data,
+                                                               num_cand_points=num_cand_points,
+                                                               box=box,
+                                                               cand_points=cand_points,
+                                                               seed=seed)
 
         if method == 'DeltaSampler':    
             sample_object = DeltaSampler.sample_points(num_points,
@@ -130,7 +149,8 @@ class KoshSampler(KoshOperator):
                                                        output,
                                                        num_cand_points=num_cand_points,
                                                        box=box,
-                                                       cand_points=cand_points)
+                                                       cand_points=cand_points,
+                                                       seed=seed)
 
         elif method == 'ExpectedImprovementSampler':
             sample_object = ExpectedImprovementSampler.sample_points(num_points,
@@ -139,7 +159,8 @@ class KoshSampler(KoshOperator):
                                                                      output,
                                                                      num_cand_points=num_cand_points,
                                                                      box=box,
-                                                                     cand_points=cand_points)
+                                                                     cand_points=cand_points,
+                                                                     seed=seed)
 
         elif method == 'LearningExpectedImprovementSampler':
             sample_object = LearningExpectedImprovementSampler.sample_points(num_points,
@@ -148,7 +169,8 @@ class KoshSampler(KoshOperator):
                                                                              output,
                                                                              num_cand_points=num_cand_points,
                                                                              box=box,
-                                                                             cand_points=cand_points)
+                                                                             cand_points=cand_points,
+                                                                             seed=seed)
 
 
         return sample_object

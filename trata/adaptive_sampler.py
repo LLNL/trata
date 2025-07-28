@@ -162,7 +162,7 @@ class BestCandidateSampler(ScoredSampler):
     name = "Best-Candidate"
 
     @staticmethod
-    def sample_points(num_points, X, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
+    def sample_points(num_points, values, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Create a set of points to add to existing input data based on distance.
 
@@ -172,12 +172,13 @@ class BestCandidateSampler(ScoredSampler):
             - num_cand_points (int): The number of candidate points to generate (optional)
             - box ([[float]]): The bounding box of the candidate points (optional)
             - cand_points ([[float]]): The set of candidate points
+            - seed: The random seed
 
         Returns (numpy array):
             - A two dimensional numpy array of sample points
         """
         return super(BestCandidateSampler, BestCandidateSampler).sample_points(num_points=num_points,
-                                                                               X=X,
+                                                                               values=values,
                                                                                num_cand_points=num_cand_points,
                                                                                box=box,
                                                                                cand_points=cand_points,
@@ -191,10 +192,9 @@ class BestCandidateSampler(ScoredSampler):
 
         Args:
             - kwargs:
-                * model (Surrogate Model): The trained surrogate model
                 * cand_points ([[float]]): The set of candidate points
-                * X (numpy array): The input points for training 'model'
-                * Y (numpy array): The output points for training 'model'
+                * values (numpy array): The values of the inputs
+                * box ([[float]]): The ranges of the inputs
 
         Returns ([float]):
             - Array of scores
@@ -202,11 +202,11 @@ class BestCandidateSampler(ScoredSampler):
         from sklearn.neighbors import NearestNeighbors
 
         np_candidate_points = kwargs['cand_points']
-        np_x = kwargs['X']
+        np_values = np.array(kwargs['values'])
         ranges = kwargs['box']
 
         # Check number of features matches the ranges
-        num_features = np_x.shape[1]
+        num_features = np_values.shape[1]
 
         if ranges is not None:
             if len(ranges) != num_features:
@@ -215,11 +215,11 @@ class BestCandidateSampler(ScoredSampler):
                 raise ValueError(msg)
 
         # Determine the number of nearest neighbors (use 3 or fewer if not enough existing samples).
-        n_neighbors = min(3, np_x.shape[0])
+        n_neighbors = min(3, np_values.shape[0])
 
         # Use NearestNeighbors to compute distances to the existing dataset.
         nbrs = NearestNeighbors(n_neighbors=n_neighbors)
-        nbrs.fit(np_x)
+        nbrs.fit(np_values)
         distances, _ = nbrs.kneighbors(np_candidate_points)
 
         # Compute the average distance to the nearest neighbors for each candidate.
@@ -234,7 +234,7 @@ class DeltaSampler(ScoredSampler):
     name = "Delta"
 
     @staticmethod
-    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
+    def sample_points(num_points, model, values, output, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Creates a set of sample points based on the delta of nearest neighbor outputs.
 
@@ -247,8 +247,8 @@ class DeltaSampler(ScoredSampler):
             - box ([[float]]): The bounding box of the candidate points (optional)
             - cand_points ([[float]]): The set of candidate points
             - model (Surrogate Model): The trained surrogate model
-            - X (numpy array): The input points for training 'model'
-            - Y (numpy array): The output points for training 'model'
+            - values (numpy array): The input points for training 'model'
+            - output (numpy array): The output points for training 'model'
 
         Returns (numpy array):
             - A two dimensional numpy array of sample points
@@ -258,8 +258,8 @@ class DeltaSampler(ScoredSampler):
                                                                num_cand_points=num_cand_points,
                                                                box=box,
                                                                cand_points=cand_points,
-                                                               X=X,
-                                                               Y=Y,
+                                                               values=values,
+                                                               output=output,
                                                                seed=seed)
 
     @staticmethod
@@ -273,41 +273,41 @@ class DeltaSampler(ScoredSampler):
             - kwargs:
                 * model (Surrogate Model): The trained surrogate model
                 * cand_points ([[float]]): The set of candidate points
-                * X (numpy array): The input points for training 'model'
-                * Y (numpy array): The output points for training 'model'
+                * values (numpy array): The input points for training 'model'
+                * output (numpy array): The output points for training 'model'
 
         Returns ([float]):
             - Array of scores
         """
 
         model = kwargs['model']
-        np_x = kwargs['X']
-        np_y = kwargs['Y']
+        np_values = kwargs['values']
+        np_output = kwargs['output']
         np_candidate_points = kwargs['cand_points']
 
         np_candidate_predicted = model.predict(np_candidate_points, return_std=False)
 
-        # For each candidate point find the closest point in npX
-        np_closest_indices = np.array([DeltaSampler._get_closest_index(np_candidate_points[i], np_x)
+        # For each candidate point find the closest point in np_values
+        np_closest_indices = np.array([DeltaSampler._get_closest_index(np_candidate_points[i], np_values)
                                        for i in range(np_candidate_points.shape[0])])
 
-        # Get the npY value from the corresponding npX value closest to each candidate points
-        np_closest_values = np_y[np_closest_indices].flatten()
+        # Get the np_output value from the corresponding np_values value closest to each candidate points
+        np_closest_values = np_output[np_closest_indices].flatten()
         return abs(np_closest_values-np_candidate_predicted)#.flatten()
 
     @staticmethod
-    def _get_closest_index(reference_point, X):
+    def _get_closest_index(reference_point, values):
         """
         Returns the index of the point closest to the reference point
 
         Args:
             - reference_point ([float]): The point from which to determine distance
-            - X ([[float]]): The set of points on which to determine distance
+            - values ([[float]]): The set of points on which to determine distance
 
         Returns (int):
-            - The index of the point in npX closest to the reference point
+            - The index of the point in np_values closest to the reference point
         """
-        np_distances = np.array([np.linalg.norm(reference_point - X[i]) for i in range(X.shape[0])])
+        np_distances = np.array([np.linalg.norm(reference_point - values[i]) for i in range(values.shape[0])])
         return np_distances.argmin()
 
 
@@ -317,7 +317,7 @@ class ExpectedImprovementSampler(ScoredSampler):
     name = "Expected Improvement"
 
     @staticmethod
-    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
+    def sample_points(num_points, model, values, output, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Creates a set of sample points based on the ALM score and Delta score
 
@@ -329,8 +329,8 @@ class ExpectedImprovementSampler(ScoredSampler):
             - box ([[float]]): The bounding box of the candidate points (optional)
             - cand_points ([[float]]): The set of candidate points
             - model (Surrogate Model): The trained surrogate model
-            - X (numpy array): The input points for training 'model'
-            - Y (numpy array): The output points for training 'model'
+            - values (numpy array): The input points for training 'model'
+            - output (numpy array): The output points for training 'model'
 
         Returns (numpy array):
             - A two dimensional numpy array of sample points
@@ -341,8 +341,8 @@ class ExpectedImprovementSampler(ScoredSampler):
                                                                num_cand_points=num_cand_points,
                                                                box=box,
                                                                cand_points=cand_points,
-                                                               X=X,
-                                                               Y=Y,
+                                                               values=values,
+                                                               output=output,
                                                                seed=seed)
 
     @staticmethod
@@ -357,8 +357,8 @@ class ExpectedImprovementSampler(ScoredSampler):
             - kwargs:
                 * model (Surrogate Model): The trained surrogate model
                 * npCandPnts ([[float]]): The set of candidate points
-                * npX (numpy array): The input points for training 'model'
-                * npY (numpy array): The output points for training 'model'
+                * np_values (numpy array): The input points for training 'model'
+                * np_output (numpy array): The output points for training 'model'
 
         Returns ([float]):
             - Array of scores
@@ -374,7 +374,7 @@ class LearningExpectedImprovementSampler(ScoredSampler):
     name = "Learning Expected Improvement"
 
     @staticmethod
-    def sample_points(num_points, model, X, Y, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
+    def sample_points(num_points, model, values, output, num_cand_points=None, box=None, cand_points=None, seed=None, **kwargs):
         """
         Creates a set of sample points based on learning the best relationship using the ALM score and Delta score
 
@@ -390,8 +390,8 @@ class LearningExpectedImprovementSampler(ScoredSampler):
             - box ([[float]]): The bounding box of the candidate points (optional)
             - cand_points ([[float]]): The set of candidate points
             - model (Surrogate Model): The trained surrogate model
-            - X (numpy array): The input points for training 'model'
-            - Y (numpy array): The output points for training 'model'
+            - values (numpy array): The input points for training 'model'
+            - output (numpy array): The output points for training 'model'
 
         Returns (numpy array):
             - A two dimensional numpy array of sample points
@@ -402,8 +402,8 @@ class LearningExpectedImprovementSampler(ScoredSampler):
                                                                        num_cand_points=num_cand_points,
                                                                        box=box,
                                                                        cand_points=cand_points,
-                                                                       X=X,
-                                                                       Y=Y,
+                                                                       values=values,
+                                                                       output=output,
                                                                        seed=seed)
 
     @staticmethod
@@ -418,20 +418,20 @@ class LearningExpectedImprovementSampler(ScoredSampler):
             - kwargs:
                 * cand_points ([[float]]): The set of candidate points
                 * model (Surrogate Model): The trained surrogate model
-                * X (numpy array): The input points for training 'model'
-                * Y (numpy array): The output points for training 'model'
+                * values (numpy array): The input points for training 'model'
+                * output (numpy array): The output points for training 'model'
 
         Returns ([float]):
             - Array of scores
         """
 
         model = kwargs['model']
-        np_x = kwargs['X']
-        np_y = kwargs['Y']
+        np_values = kwargs['values']
+        np_output = kwargs['output']
         np_candidate_points = kwargs['cand_points']
 
         np_intermediate_ALM, np_intermediate_delta, f_residual = \
-            LearningExpectedImprovementSampler._calculate_intermediate_scores(cp(model), np_x, np_y)
+            LearningExpectedImprovementSampler._calculate_intermediate_scores(cp(model), np_values, np_output)
 
         def score(_alpha, _beta, _rho, _alm, _delta):
             return _alpha + _beta * (_rho * np.power(_alm, 2.0) + (1 - _rho) * np.power(_delta, 2.0))
@@ -450,7 +450,7 @@ class LearningExpectedImprovementSampler(ScoredSampler):
                                      bounds=((None, None), (0.0, None), (0.0, 1.0)))
 
         ALM_score = ActiveLearningSampler._get_score(model=model, cand_points=np_candidate_points)
-        delta_score = DeltaSampler._get_score(model=model, cand_points=np_candidate_points, X=np_x, Y=np_y)
+        delta_score = DeltaSampler._get_score(model=model, cand_points=np_candidate_points, values=np_values, output=np_output)
 
         min_index = np.argmin([result['fun'] for result in results])
 
@@ -458,7 +458,7 @@ class LearningExpectedImprovementSampler(ScoredSampler):
         return score(alpha, beta, rho, ALM_score, delta_score)
 
     @staticmethod
-    def _calculate_intermediate_scores(model, X, Y):
+    def _calculate_intermediate_scores(model, values, output):
         """
         Calculates the intermediate scores for each point.
 
@@ -468,33 +468,33 @@ class LearningExpectedImprovementSampler(ScoredSampler):
 
         Args:
             - model (Surrogate Model): The re-fittable surrogate model
-            - X (numpy array): The input points for training 'model'
-            - Y (numpy array): The output points for training 'model'
+            - values (numpy array): The input points for training 'model'
+            - output (numpy array): The output points for training 'model'
 
         Returns (3-tuple of numpy arrays):
             - Intermediate ALM, Delta, and Residual scores for each point
         """
 
-        np_training_ALM = np.array([0.] * len(Y))
-        np_training_delta = np.array([0.] * len(Y))
-        np_residuals = np.array([0.] * len(Y))
+        np_training_ALM = np.array([0.] * len(output))
+        np_training_delta = np.array([0.] * len(output))
+        np_residuals = np.array([0.] * len(output))
 
-        for index in range(len(Y)):
+        for index in range(len(output)):
 
-            # Construct model leaving out npX[index] and npY[index]
-            left_out_point = X[index].reshape(1, -1)
-            np_alt_x = np.delete(X, [index], 0)
+            # Construct model leaving out np_values[index] and np_output[index]
+            left_out_point = values[index].reshape(1, -1)
+            np_alt_values = np.delete(values, [index], 0)
 
-            np_alt_y = np.delete(Y, [index], 0)
+            np_alt_output = np.delete(output, [index], 0)
 
-            model.fit(np_alt_x, np_alt_y)
+            model.fit(np_alt_values, np_alt_output)
 
             # Get scores from new model on left out point
             np_training_ALM[index] = ActiveLearningSampler._get_score(model=model, cand_points=left_out_point)[0]
             np_training_delta[index] = DeltaSampler._get_score(model=model, cand_points=left_out_point,
-                                                               X=np_alt_x, Y=np_alt_y)[0]
-            y_pred = model.predict(left_out_point)
-            np_residuals[index] = np.absolute(Y[index] - y_pred)
+                                                               values=np_alt_values, output=np_alt_output)[0]
+            output_pred = model.predict(left_out_point)
+            np_residuals[index] = np.absolute(output[index] - output_pred)
 
         np_mean_squared_error = np.power(np_residuals, 2.0)
 

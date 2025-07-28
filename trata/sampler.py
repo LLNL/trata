@@ -673,7 +673,7 @@ class OneAtATimeSampler(ContinuousSampler):
                 ls_points.append(ls_values_low)
                 ls_points.append(ls_values_high)
 
-        return np.array(ls_points)
+        return np.array(ls_points).reshape(-1, len(ls_box))
 
 
 class DefaultValueSampler(ContinuousSampler):
@@ -1445,6 +1445,10 @@ class FractionalFactorialSampler(ContinuousSampler, DiscreteOrderedSampler):
 
         ls_box = DiscreteOrderedSampler.normalize_box(box, values)
         i_num_dim = len(ls_box)
+
+        if i_num_dim < 2:
+            raise ValueError("Fractional factorial sampling requires at least 2 parameters")
+
         generator_arrays, resolution, fraction = _FractionalHelperTable.get_el(resolution, fraction, i_num_dim)
         i_num_points = 2 ** (i_num_dim - fraction)
 
