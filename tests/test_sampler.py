@@ -623,7 +623,7 @@ def test_SamplePointsSampler_invalid():
     # samples not given
     pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points)
     # not enough dimensions in  samples
-    pytest.raises(np.AxisError, trata.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=[0.0, 1.0])
     # too many dimensions in samples
     pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points,
