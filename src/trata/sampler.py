@@ -196,6 +196,11 @@ class LatinHyperCubeSampler(ContinuousSampler, DiscreteOrderedSampler):
         Returns (list):
             - List of intervals
         """
+        def _to_float(value):
+            """Convert value to float, handling both numpy arrays and regular numbers."""
+            if hasattr(value, 'item'):
+                return float(value.item())
+            return float(value)
 
         f_delta = (f_high - f_low) / (i_num_intervals ** f_degree)
         ls_poly = [1.0] * (i_num_intervals - 1)
@@ -206,7 +211,7 @@ class LatinHyperCubeSampler(ContinuousSampler, DiscreteOrderedSampler):
         f_a = f_low
         for _ in range(i_num_intervals):
             f_b = f_a + f_delta
-            ls_intervals.append((float(f_a), float(f_b)))
+            ls_intervals.append((_to_float(f_a), _to_float(f_b)))
             f_a = f_b
             f_delta = f_epsilon * f_delta
 
@@ -918,6 +923,10 @@ class SamplePointsSampler(ContinuousSampler, DiscreteOrderedSampler):
         """
 
         np_samples = np.array(samples, dtype='O')
+
+        # Ensure samples is at least 2D
+        if np_samples.ndim < 2:
+            raise TypeError("Samples must be a 2D array-like structure")
 
         lengths = np.apply_along_axis(len, 1, np_samples)
 

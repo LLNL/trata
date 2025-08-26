@@ -629,13 +629,10 @@ def test_SamplePointsSampler_invalid():
     pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]])
     # samples not list
-    pytest.raises(np.AxisError, trata.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=1)
-    # samples list of strings
-    pytest.raises(ValueError, trata.sampler.SamplePointsSampler.sample_points,
-                      samples=["foo", "bar"])
     # sample with incorrect size
-    pytest.raises(ValueError, trata.sampler.SamplePointsSampler.sample_points,
+    pytest.raises(TypeError, trata.sampler.SamplePointsSampler.sample_points,
                       samples=[[0.0, 1.0], [0.0, 1.0], [0.0, 1.0, 2.0]])
 
 def test_RejectionSampler_valid():

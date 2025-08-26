@@ -23,7 +23,7 @@ maintainers = [
 ]
 readme = "README.md"
 packages = [
-    { include = 'trata'}
+    { include = 'trata', from = 'src'}
 ]
 
 [tool.poetry.dependencies]
