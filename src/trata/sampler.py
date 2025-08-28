@@ -613,42 +613,47 @@ class OneAtATimeSampler(ContinuousSampler):
 
     name = "List"
 
-@staticmethod
-def sample_points(box, default=None, use_low=False, use_high=False, use_default=False, do_oat=False, **kwargs):
-    """
-    Create a set of points varying each dimension one at a time
-    """
-    if do_oat and default is None:
-        raise ValueError("default must be provided for OAT sampling")
+    @staticmethod
+    def sample_points(box, default=None, use_low=False, use_high=False, use_default=False, do_oat=False, **kwargs):
+        """
+        Create a set of points varying each dimension one at a time
+        """
+        # Validate that default is provided when needed
+        if (use_default or do_oat) and default is None:
+            raise ValueError("'default' parameter is required when use_default=True or do_oat=True")
+
+       # Validate default has correct dimensions when provided
+        if default is not None and len(default) != len(box):
+            raise ValueError(f"Default point has {len(default)} dimensions, but box has {len(box)} dimensions")
     
-    ls_points = []
-    
-    # Handle corner points (all-low, all-high, default)
-    if use_low:
-        ls_points.append([box[j][0] for j in range(len(box))])
-    if use_high:
-        ls_points.append([box[j][1] for j in range(len(box))])
-    if use_default:
-        ls_points.append(list(default))
-    
-    # Handle OAT sampling
-    if do_oat:
-        # ALWAYS include the base point first for OAT
-        ls_points.insert(0, list(default))  # Put at beginning
+        ls_points = []
         
-        # Add variations for each dimension
-        for i in range(len(box)):
-            # Low variation for dimension i
-            point_low = list(default)
-            point_low[i] = float(box[i][0])
-            ls_points.append(point_low)
+        # Handle corner points (all-low, all-high, default)
+        if use_low:
+            ls_points.append([box[j][0] for j in range(len(box))])
+        if use_high:
+            ls_points.append([box[j][1] for j in range(len(box))])
+        if use_default and not do_oat:   # Only add default if NOT doing OAT
+            ls_points.append(list(default))
+        
+        # Handle OAT sampling
+        if do_oat:
+            # ALWAYS include the base point first for OAT
+            ls_points.insert(0, list(default))  # Put at beginning
             
-            # High variation for dimension i
-            point_high = list(default)
-            point_high[i] = float(box[i][1])
-            ls_points.append(point_high)
-    
-    return np.array(ls_points)
+            # Add variations for each dimension
+            for i in range(len(box)):
+                # Low variation for dimension i
+                point_low = list(default)
+                point_low[i] = float(box[i][0])
+                ls_points.append(point_low)
+                
+                # High variation for dimension i
+                point_high = list(default)
+                point_high[i] = float(box[i][1])
+                ls_points.append(point_high)
+        
+        return np.array(ls_points)
 
 
 class DefaultValueSampler(ContinuousSampler):

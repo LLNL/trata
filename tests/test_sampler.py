@@ -345,20 +345,19 @@ def test_CenteredSampler_invalid():
 def test_OneAtATimeSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
     np_actual_values = trata.sampler.OneAtATimeSampler.sample_points(box=ls_test_box,
-                                                                                default=[1, 2, 3],
-                                                                                do_oat=True,
-                                                                                use_low=True,
-                                                                                use_high=True,
-                                                                                use_default=True)
-    ls_expected_values = [[0., -25., -25.],
-                          [25., 0., 25.],
-                          [1., 2., 3.],
+                                                                     default=[1, 2, 3],
+                                                                     do_oat=True,
+                                                                     use_low=False,
+                                                                     use_high=False,
+                                                                     use_default=False)
+    ls_expected_values = [[1., 2., 3.],
                           [0., 2., 3.],
                           [25., 2., 3.],
                           [1., -25., 3.],
                           [1., 0., 3.],
                           [1., 2., -25.],
                           [1., 2., 25.]]
+
     np.testing.assert_array_equal(np_actual_values, ls_expected_values)
 
 def test_OneAtATimeSampler_invalid():
@@ -381,16 +380,26 @@ def test_OneAtATimeSampler_invalid():
                       default=[1, 2],
                       do_oat=True)
     # default length less than number of dimensions in box
-    pytest.raises(IndexError, trata.sampler.OneAtATimeSampler.sample_points,
+    pytest.raises(ValueError, trata.sampler.OneAtATimeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
                       default=[2],
                       use_default=True)
-    # default type int
-    pytest.raises(TypeError, trata.sampler.OneAtATimeSampler.sample_points,
+    # default is None when required for do_oat
+    pytest.raises(ValueError, trata.sampler.OneAtATimeSampler.sample_points,
                       box=[[0.0, 1.0], [0.0, 1.0]],
-                      default=2,
+                      default=None,
+                      do_oat=True)
+    # default is None when required for use_default
+    pytest.raises(ValueError, trata.sampler.OneAtATimeSampler.sample_points,
+                      box=[[0.0, 1.0], [0.0, 1.0]],
+                      default=None,
                       use_default=True)
-                      
+    # default has too many dimensions
+    pytest.raises(ValueError, trata.sampler.OneAtATimeSampler.sample_points,
+                      box=[[0.0, 1.0], [0.0, 1.0]],
+                      default=[1, 2, 3],  # 3 dims when box has 2
+                      use_default=True)
+
 def test_DefaultValueSampler_valid():
     ls_test_default = [-1, 0, 2, np.pi]
     np_actual_values = trata.sampler.DefaultValueSampler.sample_points(num_points=2,
