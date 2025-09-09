@@ -196,6 +196,11 @@ class LatinHyperCubeSampler(ContinuousSampler, DiscreteOrderedSampler):
         Returns (list):
             - List of intervals
         """
+        def _to_float(value):
+            """Convert value to float, handling both numpy arrays and regular numbers."""
+            if hasattr(value, 'item'):
+                return float(value.item())
+            return float(value)
 
         f_delta = (f_high - f_low) / (i_num_intervals ** f_degree)
         ls_poly = [1.0] * (i_num_intervals - 1)
@@ -206,7 +211,7 @@ class LatinHyperCubeSampler(ContinuousSampler, DiscreteOrderedSampler):
         f_a = f_low
         for _ in range(i_num_intervals):
             f_b = f_a + f_delta
-            ls_intervals.append((float(f_a), float(f_b)))
+            ls_intervals.append((_to_float(f_a), _to_float(f_b)))
             f_a = f_b
             f_delta = f_epsilon * f_delta
 
@@ -605,75 +610,74 @@ class CenteredSampler(ContinuousSampler):
 
 class OneAtATimeSampler(ContinuousSampler):
     """A sampler for creating sample sets varying each dimension one at a time."""
-
     name = "List"
 
     @staticmethod
     def sample_points(box, default=None, use_low=False, use_high=False, use_default=False, do_oat=False, **kwargs):
         """
-        Create a set of points varying each dimension one at a time
+        Create a set of points varying each dimension one at a time        
 
-        Generates a a set of points with each dimension taking on its high and low values once, keeping all
-         other dimensions constant at the default point. Can also include point with all dimensions set at the high
-         value and the low value, as well as the default point itself.
+        Generates a set of points with each dimension taking on its high and low values once, keeping all
+        other dimensions constant at the default point. Can also include points with all dimensions set at the high
+        value and the low value, as well as the default point itself.
 
         Args:
             - box ([[float]]): The bounding box
-            - default ([float]): The default center point. Not used if only using 'high'/'low'
+            - default ([float]): The default center point. Required when use_default=True or do_oat=True.
             - use_low (bool): Whether to include a point with all the low values from 'box'
             - use_high (bool): Whether to include a point with all the high values from 'box'
-            - use_default (bool): Whether to include the default point
-            - do_oat (bool): Whether to perform one at a time sampling. Each dimension is chosen one at a time to use the high and low value in that dimension. The other dimension's values for the point come from the given default value
+            - use_default (bool): Whether to include the default point. Note: when do_oat=True, 
+              the default point is automatically included as the base point, so this flag is ignored.
+            - do_oat (bool): Whether to perform one-at-a-time sampling. Each dimension is chosen
+              one at a time to use the high and low value in that dimension. The other dimensions'
+              values for the point come from the given default value. When True, the default point
+              is always placed first in the returned array.
 
         Returns (numpy array):
-            - A two dimensional numpy array of sample points
+            - A two dimensional numpy array of sample points. When do_oat=True (only), returns 
+              exactly 2*n+1 points where n is the number of dimensions.
 
         Raises:
-            - ValueError
-            - TypeError
-            - IndexError: If the default point has length less than the number of dimensions in box
+            - ValueError: If default is None when required, or if default has incorrect dimensions
+            - TypeError: If box has invalid structure or type
         """
 
-        ls_box = box
+        # Validate that default is provided when needed
+        if (use_default or do_oat) and default is None:
+            raise ValueError("'default' parameter is required when use_default=True or do_oat=True")
 
-        ls_do_low_default_high = [False] * 3
-
-        ls_do_low_default_high[0] = use_low
-        ls_do_low_default_high[1] = use_high
-        ls_do_low_default_high[2] = use_default
-
+       # Validate default has correct dimensions when provided
+        if default is not None and len(default) != len(box):
+            raise ValueError(f"Default point has {len(default)} dimensions, but box has {len(box)} dimensions")
+    
         ls_points = []
-
-        for i in range(len(ls_do_low_default_high)):
-            ls_point = []
-            if ls_do_low_default_high[i]:
-                for j in range(len(ls_box)):
-                    if i < 2:
-                        f_tmp_val = ls_box[j][i]
-                    else:
-                        f_tmp_val = default[j]
-                    ls_point.append(f_tmp_val)
-                ls_points.append(ls_point)
-
+        
+        # Handle corner points (all-low, all-high, default)
+        if use_low:
+            ls_points.append([box[j][0] for j in range(len(box))])
+        if use_high:
+            ls_points.append([box[j][1] for j in range(len(box))])
+        if use_default and not do_oat:   # Only add default if NOT doing OAT
+            ls_points.append(list(default))
+        
+        # Handle OAT sampling
         if do_oat:
-            for i in range(len(ls_box)):
-                ls_values_low = []
-                ls_values_high = []
-
-                for j in range(len(ls_box)):
-                    if i == j:
-                        f_tmp_val_low = float(ls_box[j][0])
-                        f_tmp_val_high = float(ls_box[j][1])
-                    else:
-                        f_tmp_val_low = default[j]
-                        f_tmp_val_high = f_tmp_val_low
-
-                    ls_values_low.append(f_tmp_val_low)
-                    ls_values_high.append(f_tmp_val_high)
-                ls_points.append(ls_values_low)
-                ls_points.append(ls_values_high)
-
-        return np.array(ls_points).reshape(-1, len(ls_box))
+            # ALWAYS include the base point first for OAT
+            ls_points.insert(0, list(default))  # Put at beginning
+            
+            # Add variations for each dimension
+            for i in range(len(box)):
+                # Low variation for dimension i
+                point_low = list(default)
+                point_low[i] = float(box[i][0])
+                ls_points.append(point_low)
+                
+                # High variation for dimension i
+                point_high = list(default)
+                point_high[i] = float(box[i][1])
+                ls_points.append(point_high)
+        
+        return np.array(ls_points)
 
 
 class DefaultValueSampler(ContinuousSampler):
@@ -918,6 +922,10 @@ class SamplePointsSampler(ContinuousSampler, DiscreteOrderedSampler):
         """
 
         np_samples = np.array(samples, dtype='O')
+
+        # Ensure samples is at least 2D
+        if np_samples.ndim < 2:
+            raise TypeError("Samples must be a 2D array-like structure")
 
         lengths = np.apply_along_axis(len, 1, np_samples)
 

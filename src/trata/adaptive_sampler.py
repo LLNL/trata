@@ -494,7 +494,8 @@ class LearningExpectedImprovementSampler(ScoredSampler):
             np_training_delta[index] = DeltaSampler._get_score(model=model, cand_points=left_out_point,
                                                                values=np_alt_values, output=np_alt_output)[0]
             output_pred = model.predict(left_out_point)
-            np_residuals[index] = np.absolute(output[index] - output_pred)
+            residual_array = np.absolute(output[index] - output_pred)
+            np_residuals[index] = residual_array.item()
 
         np_mean_squared_error = np.power(np_residuals, 2.0)
 
