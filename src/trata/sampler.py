@@ -610,14 +610,38 @@ class CenteredSampler(ContinuousSampler):
 
 class OneAtATimeSampler(ContinuousSampler):
     """A sampler for creating sample sets varying each dimension one at a time."""
-
     name = "List"
 
     @staticmethod
     def sample_points(box, default=None, use_low=False, use_high=False, use_default=False, do_oat=False, **kwargs):
         """
-        Create a set of points varying each dimension one at a time
+        Create a set of points varying each dimension one at a time        
+
+        Generates a set of points with each dimension taking on its high and low values once, keeping all
+        other dimensions constant at the default point. Can also include points with all dimensions set at the high
+        value and the low value, as well as the default point itself.
+
+        Args:
+            - box ([[float]]): The bounding box
+            - default ([float]): The default center point. Required when use_default=True or do_oat=True.
+            - use_low (bool): Whether to include a point with all the low values from 'box'
+            - use_high (bool): Whether to include a point with all the high values from 'box'
+            - use_default (bool): Whether to include the default point. Note: when do_oat=True, 
+              the default point is automatically included as the base point, so this flag is ignored.
+            - do_oat (bool): Whether to perform one-at-a-time sampling. Each dimension is chosen
+              one at a time to use the high and low value in that dimension. The other dimensions'
+              values for the point come from the given default value. When True, the default point
+              is always placed first in the returned array.
+
+        Returns (numpy array):
+            - A two dimensional numpy array of sample points. When do_oat=True (only), returns 
+              exactly 2*n+1 points where n is the number of dimensions.
+
+        Raises:
+            - ValueError: If default is None when required, or if default has incorrect dimensions
+            - TypeError: If box has invalid structure or type
         """
+
         # Validate that default is provided when needed
         if (use_default or do_oat) and default is None:
             raise ValueError("'default' parameter is required when use_default=True or do_oat=True")
