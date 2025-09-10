@@ -1115,8 +1115,14 @@ class ProbabilityDensityFunctionSampler(ContinuousSampler):
                 low, high = box[i]
                 dim_params = _auto_fit_to_box(dist, low, high, dim_params)
 
+            scipy_params = {}
+            known_scipy_params = ['loc', 'scale', 'a', 'b', 'df', 's', 'size']  # extend as needed
+            for key, value in dim_params.items():
+                if key in known_scipy_params:
+                    scipy_params[key] = value
+
             # Generate samples for this dimension
-            samples = distribution.rvs(size=num_points, **dim_params)
+            samples = distribution.rvs(size=int(num_points), **scipy_params)
 
             # Clip to box bounds if provided
             if box is not None:
