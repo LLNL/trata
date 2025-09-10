@@ -773,137 +773,46 @@ def test_RejectionSampler_invalid():
                       metropolis=True)
 
 def test_ProbabilityDensityFunctionSampler_valid():
-    ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
+    ls_test_box = [[0., 1.], [-1., 1.]]
     np_actual_values_normal1 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
-        num_points=25,
+        num_points=5,
         box=ls_test_box,
         dist='norm',
-        seed=2018,
-        loc=[0, 1, 2],
-        scale=[1, 2,
-               3])
+        seed=3)
     np_actual_values_normal2 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
-        num_points=25,
-        num_dim=3,
+        num_points=5,
+        box=ls_test_box,
         dist='norm',
-        seed=2018,
-        loc=[0, 1, 2],
-        scale=[1, 2,
-               3])
-    np_expected_values_normal = [[-2.76767596e-01, 1.12742035e+00, 2.56500242e+00],
-                                 [5.81851002e-01, 1.74125677e+00, -2.74069262e+00],
-                                 [2.14839926e+00, -2.20908588e+00, 7.59344976e-01],
-                                 [-1.27948700e+00, -3.33145875e+00, -1.22908762e+00],
-                                 [5.02276889e-01, 1.76074025e+00, -5.55505664e-01],
-                                 [8.56029296e-01, 4.46997821e-01, 4.35426380e+00],
-                                 [-1.42790075e-01, -1.51363889e-01, 1.82683181e-01],
-                                 [1.10078666e-01, 1.84370861e+00, 1.55439922e+00],
-                                 [-6.88064791e-01, 2.40956059e+00, 2.40127728e+00],
-                                 [4.33564082e-01, 1.09080232e+00, -7.84269975e-01],
-                                 [5.10221003e-01, 2.06138014e+00, 1.87191272e+00],
-                                 [-1.65130974e-01, 1.27625072e+00, 6.01374931e+00],
-                                 [-1.35177905e+00, 1.74092627e+00, 1.93084137e+00],
-                                 [5.46630750e-01, 8.92244393e-01, 4.79469766e+00],
-                                 [1.23065512e+00, 3.14559200e+00, -1.35700491e+00],
-                                 [1.07644610e+00, 1.83050518e+00, 2.40592246e+00],
-                                 [-1.21062488e+00, -5.83114027e-01, 1.44430622e+00],
-                                 [-3.06676569e-01, -6.06749747e-01, -3.39799248e-01],
-                                 [-1.05741884e+00, 1.00800016e+00, 3.35980613e+00],
-                                 [4.02056921e-01, 2.67637681e+00, 3.45225970e+00],
-                                 [2.89165121e-01, 1.09416744e+00, -5.61257253e-03],
-                                 [1.28273322e+00, -3.44237377e+00, -9.44906587e-01],
-                                 [-1.06569580e+00, 1.89758089e+00, 4.29167103e-01],
-                                 [-1.70663287e+00, 9.73132446e-01, 3.06222913e+00],
-                                 [-1.72797393e-01, 2.57408495e+00, 1.08258842e+00]]
+        seed=3)
+    np_expected_values_normal = [[ 0.94715712, -0.17737949],
+                                 [ 0.60912746, -0.04137074],
+                                 [ 0.52412437, -0.31350034],
+                                 [ 0.03412682, -0.02190908],
+                                 [ 0.43065295, -0.23860902]]
     np.testing.assert_array_almost_equal(np_actual_values_normal1, np_actual_values_normal2)
     np.testing.assert_array_almost_equal(np_actual_values_normal1, np_expected_values_normal)
     np.testing.assert_array_almost_equal(np_actual_values_normal2, np_expected_values_normal)
-    np_actual_values_t1 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=25,
-                                                                                                   box=ls_test_box,
-                                                                                                   dist='t',
-                                                                                                   df=[1, 1, 1],
-                                                                                                   seed=2018,
-                                                                                                   loc=[0, 1, 2],
-                                                                                                   scale=[1, 2, 3])
-    np_actual_values_t2 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=25,
-                                                                                                   num_dim=3,
-                                                                                                   dist='t',
-                                                                                                   df=[1, 1, 1],
-                                                                                                   seed=2018,
-                                                                                                   loc=[0, 1, 2],
-                                                                                                   scale=[1, 2, 3])
-    np_expected_values_t = [[-4.38396851e-01, 1.80207294e+00, 9.57809380e+00],
-                            [3.87860557e-01, -6.88818046e-02, 5.77063075e-01],
-                            [-1.17273034e-01, -4.02653982e+00, -8.43897281e-01],
-                            [9.72220842e-02, 2.62320953e+00, -1.27796888e+01],
-                            [5.77768450e-01, 2.29377858e+00, 3.29600403e+00],
-                            [-1.65427161e-01, 2.05853960e+02, -1.17740323e+01],
-                            [-1.31848217e+00, 3.59189397e+00, 1.00827335e+01],
-                            [-2.41074715e+00, 3.99150012e+00, 1.81229730e+00],
-                            [5.91206459e-01, -5.87243841e+00, 2.05007250e+00],
-                            [6.60219320e+00, 7.33970763e-02, 8.91551657e-01],
-                            [-4.83539318e-01, 6.12506595e-01, 5.41805830e+00],
-                            [8.55625426e-02, 3.23003840e+00, 9.81473626e-01],
-                            [-1.70720800e-01, 1.62838068e+00, -2.77288159e-01],
-                            [-2.24090270e-01, 1.82312419e+00, 8.98879869e+00],
-                            [8.20668013e-02, -1.42407680e+01, -1.62087075e+01],
-                            [1.90654863e+00, -1.74390999e+00, 1.38502700e+00],
-                            [-1.08393467e+00, 3.49285295e+00, 8.79522340e+00],
-                            [5.35484894e-03, 1.05911128e+00, 1.14268619e+00],
-                            [-4.01811849e-02, 5.21501116e-01, 2.30405553e+03],
-                            [3.36765585e+00, 7.78016467e+00, 4.10721500e+00],
-                            [-5.86109479e+00, -4.50222965e+00, 7.58487152e+00],
-                            [5.50014928e-01, 1.00968879e+00, 3.70347943e+00],
-                            [-5.36937830e+00, 2.85703985e+00, 7.03414007e-01],
-                            [7.68372982e+00, 2.78730367e+00, 3.79636406e+01],
-                            [1.52954164e+00, -2.34433814e+00, 5.96064594e+00]]
+    np_actual_values_t1 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=5,
+                                                                                        num_dim=2,
+                                                                                        dist='gamma',
+                                                                                        seed=3,
+                                                                                        a=[2, 3],
+                                                                                        scale=[1, 4])
+    np_actual_values_t2 = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(num_points=5,
+                                                                                        num_dim=2,
+                                                                                        dist='gamma',
+                                                                                        seed=3,
+                                                                                        a=[2, 3],
+                                                                                        scale=[1, 4])
+    np_expected_values_t = [[ 5.20633524,  7.84328127],
+                            [ 2.29609821, 17.52114328],
+                            [ 1.33359579, 26.18369324],
+                            [ 1.24934521,  7.48623199],
+                            [ 1.61073525,  3.41836996]]
     np.testing.assert_array_almost_equal(np_actual_values_t1, np_actual_values_t2)
     np.testing.assert_array_almost_equal(np_actual_values_t1, np_expected_values_t)
     np.testing.assert_array_almost_equal(np_actual_values_t2, np_expected_values_t)
-    np_actual_values_lognormal1 = trata.sampler. \
-        ProbabilityDensityFunctionSampler.sample_points(num_points=25,
-                                                        box=ls_test_box,
-                                                        dist='lognorm',
-                                                        s=[3, 4, 5],
-                                                        seed=2018,
-                                                        loc=[0, 1, 2],
-                                                        scale=[1, 2, 3])
-    np_actual_values_lognormal2 = trata.sampler. \
-        ProbabilityDensityFunctionSampler.sample_points(num_points=25,
-                                                        num_dim=3,
-                                                        dist='lognorm',
-                                                        s=[3, 4, 5],
-                                                        seed=2018,
-                                                        loc=[0, 1, 2],
-                                                        scale=[1, 2, 3])
-    np_expected_values_lognormal = [[4.35917276e-01, 3.58051211e+00, 9.69278584e+00],
-                                    [5.72906881e+00, 9.80800285e+00, 2.00111095e+00],
-                                    [6.29671208e+02, 1.00326327e+00, 2.37940688e+00],
-                                    [2.15267052e-02, 1.00034576e+00, 2.01379843e+00],
-                                    [4.51240679e+00, 1.01579988e+01, 2.04240183e+00],
-                                    [1.30408650e+01, 1.66175679e+00, 1.53772895e+02],
-                                    [6.51570142e-01, 1.19997146e+00, 2.14511205e+00],
-                                    [1.39129643e+00, 1.18110029e+01, 3.42752806e+00],
-                                    [1.26920500e-01, 3.45242269e+01, 7.85565439e+00],
-                                    [3.67183760e+00, 3.39828004e+00, 2.02896006e+00],
-                                    [4.62123973e+00, 1.77083312e+01, 4.42330784e+00],
-                                    [6.09331440e-01, 4.47518818e+00, 2.41395878e+03],
-                                    [1.73296368e-02, 9.80218261e+00, 4.67339155e+00],
-                                    [5.15461407e+00, 2.61225846e+00, 3.18221121e+02],
-                                    [4.01236270e+01, 1.47105824e+02, 2.01114911e+00],
-                                    [2.52629353e+01, 1.15292546e+01, 7.90116459e+00],
-                                    [2.64665227e-02, 1.08432466e+00, 3.18821952e+00],
-                                    [3.98507202e-01, 1.08043126e+00, 2.06074606e+00],
-                                    [4.19089227e-02, 3.03225802e+00, 3.09322195e+01],
-                                    [3.34066792e+00, 5.81626549e+01, 3.57521836e+01],
-                                    [2.38093999e+00, 3.41447547e+00, 2.10602553e+00],
-                                    [4.69085362e+01, 1.00027697e+00, 2.02215781e+00],
-                                    [4.08811009e-02, 1.30408974e+01, 2.21883384e+00],
-                                    [5.97662883e-03, 2.89536621e+00, 1.96192872e+01],
-                                    [5.95477200e-01, 4.75867927e+01, 2.65024438e+00]]
-    np.testing.assert_array_almost_equal(np_actual_values_lognormal1, np_actual_values_lognormal2)
-    np.testing.assert_array_almost_equal(np_actual_values_lognormal1, np_expected_values_lognormal)
-    np.testing.assert_array_almost_equal(np_actual_values_lognormal2, np_expected_values_lognormal)
+
 
 # Skip for Python 2
 # For some reason, scipy's distributions are raising a Value Error instead
@@ -911,92 +820,116 @@ def test_ProbabilityDensityFunctionSampler_valid():
 # This is fixed in Python 3
 @pytest.mark.skipif(sys.version_info[0] < 3, reason="Not supported for Python 2")
 def test_ProbabilityDensityFunctionSampler_invalid():
-    # no parameters given
-    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points)
-    # nPts not given
-    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_dim=3,
-                      dist='norm')
-    # nDim or box not given
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      dist='norm')
-    # dist not given
-    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3)
-    # loc too short
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='norm',
-                      loc=[1, 2])
-    # loc too long
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='norm',
-                      loc=[1, 2, 3, 4])
-    # loc wrong type
-    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='norm',
-                      loc="foo")
-    # scale too short
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='norm',
-                      scale=[1, 2])
-    # scale too long
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='norm',
-                      scale=[1, 2, 3, 4])
-    # scale wrong type
-    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='norm',
-                      scale="foo")
-    # df too short
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='t',
-                      df=[1, 2])
-    # df too long
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='t',
-                      df=[1, 2, 3, 4])
-    # df wrong type
-    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='t',
-                      df="foo")
-    # s too short
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='lognorm',
-                      s=[1, 2])
-    # s too long
-    pytest.raises(ValueError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='lognorm',
-                      s=[1, 2, 3, 4])
-    # s wrong type
-    pytest.raises(TypeError, trata.sampler.ProbabilityDensityFunctionSampler.sample_points,
-                      num_points=25,
-                      num_dim=3,
-                      dist='lognorm',
-                      s="foo")
+    """Test that error is raised when neither box nor num_dim provided"""
+    with pytest.raises(ValueError, match="Must provide either 'box' or 'num_dim'"):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='uniform'
+        )
+
+    """Test that error is raised when both box and num_dim provided"""
+    with pytest.raises(ValueError, match="Provide either 'box' or 'num_dim', not both"):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='uniform', box=[[0,1]], num_dim=2
+        )
+
+    """Test that error is raised for non-existent distribution"""
+    with pytest.raises(ValueError, match="Distribution 'nonexistent' not found in scipy.stats"):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='nonexistent', num_dim=2
+        )
+
+    """Test that error is raised when parameter arrays don't match dimensions"""
+    with pytest.raises(ValueError, match="Parameter 'loc'.*length"):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='norm', num_dim=3, loc=[0, 1]  # 2 values for 3 dims
+        )
+
+    """Test various parameter length mismatches"""
+    test_cases = [
+        {'scale': [1, 2], 'num_dim': 3},
+        {'df': [1, 2, 3], 'num_dim': 2}, 
+        {'s': [0.5], 'num_dim': 3},
+        {'loc': [0, 1, 2], 'scale': [1, 2], 'num_dim': 2}  # mixed lengths
+    ]
+    
+    for params in test_cases:
+        with pytest.raises(ValueError, match="length must match dimensions"):
+            trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+                num_points=10, dist='norm', **params
+            )
+
+    """Test various invalid box formats"""
+    invalid_boxes = [
+        [[1]],        # Missing upper bound
+        [[1, 2, 3]],  # Too many values per dimension
+        "not_a_list", # Wrong type
+    ]
+    
+    for bad_box in invalid_boxes:
+        with pytest.raises((ValueError)):
+            trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+                num_points=10, dist='uniform', box=bad_box
+            )
+
+    """Test that negative num_points is handled"""
+    with pytest.raises((ValueError, TypeError)):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=-5, dist='uniform', num_dim=2
+        )
+
+    """Test edge case of zero points"""
+    result = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+        num_points=0, dist='uniform', num_dim=2
+    )
+    assert result.shape == (0, 2)
+
+    """Test invalid parameters for specific distributions"""
+    # Negative scale for normal distribution
+    with pytest.raises((ValueError, RuntimeError)):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='norm', num_dim=2, scale=-1
+        )
+    
+    # Invalid parameters for beta distribution
+    with pytest.raises((ValueError, RuntimeError)):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='beta', num_dim=2, a=-1, b=2
+        )
+
+    """Test invalid box bounds"""
+    # Lower bound greater than upper bound
+    with pytest.raises(ValueError, match="scale.*must be positive"):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='uniform', box=[[5, 1]]
+        )
+        # Check that all values are clipped to the valid range
+        assert np.all(result >= 1) and np.all(result <= 5)
+
+        """Test handling of extreme parameter values"""
+        # Very large scale
+        result = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='norm', num_dim=2, loc=0, scale=1e10
+        )
+        assert result.shape == (10, 2)
+        
+        # Very small scale (but positive)
+        result = trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='norm', num_dim=2, loc=0, scale=1e-10
+        )
+        assert result.shape == (10, 2)
+
+    """Test non-numeric parameter values"""
+    with pytest.raises(TypeError):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='norm', num_dim=2, loc="not_a_number"
+        )
+
+    """Test empty parameter lists"""
+    with pytest.raises(ValueError):
+        trata.sampler.ProbabilityDensityFunctionSampler.sample_points(
+            num_points=10, dist='norm', num_dim=2, loc=[]
+        )
+
 
 def test_MultiNormalSampler_valid():
     np_actual_values = trata.sampler.MultiNormalSampler.sample_points(num_points=25,

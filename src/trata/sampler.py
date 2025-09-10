@@ -1038,103 +1038,94 @@ class RejectionSampler(ContinuousSampler):
         return np.array(ls_points)
 
 
+def _auto_fit_to_box(dist_name, low, high, user_params):
+    """Auto-fit distribution to box bounds if no conflicting params provided"""
+    params = user_params.copy()
+    
+    if dist_name == 'uniform':
+        if 'loc' not in params and 'scale' not in params:
+            params['loc'] = low
+            params['scale'] = high - low
+    elif dist_name == 'norm':
+        if 'loc' not in params:
+            params['loc'] = (low + high) / 2
+        if 'scale' not in params:
+            params['scale'] = (high - low) / 4
+    # For other distributions, just use user params as-is
+    
+    return params
+
+
 class ProbabilityDensityFunctionSampler(ContinuousSampler):
     """A sampler for creating sample sets from probability distributions."""
 
     name = "Probability Density Function"
 
     @staticmethod
-    def sample_points(num_points, dist,
-                      box=None, num_dim=None, loc=None, scale=None, df=None, s=None, seed=None, **kwargs):
+    def sample_points(num_points, box=None, num_dim=None, dist='uniform', 
+                            seed=None, **dist_params):
         """
-        Create a set of points from a probability distribution
+        Sample from any scipy distribution
 
-        Generates points from scipy's stat distributions. The parameters for location, scale, and degrees of freedom
-        are passed directly to scipy's implementation. Each dimension will be sampled independently.
-
-        Only one of 'box' and 'nDim' needs to be given
-
-        Args:
-            - num_points (int): The number of sample points
-            - dist (str): Which distribution to sample from
-            - box ([[float]]): The bounding box
-            - num_dim (int): Number of dimensions
-            - loc ([float]): The location parameter of the distribution
-            - scale ([float]): The scale parameter of the distribution
-            - df ([float]): The degrees of freedom parameter of the distribution
-            - s ([float]): The 's' parameter of the distribution
-            - seed (int): Random seed
-
-        Returns (numpy array):
-            - A two dimensional numpy array of sample points
-
-        Raises:
-            - ValueError
-            - TypeError
+        Parameters:
+        - num_points: number of samples
+        - box: [[low, high], ...] bounds for each dimension (optional)
+        - num_dim: number of dimensions if box not provided (optional) 
+        - dist: scipy distribution name (e.g., 'uniform', 'norm', 'beta', 'gamma')
+        - seed: random seed
+        - **dist_params: distribution parameters (loc, scale, a, b, etc.)
+                         Can be scalars (same for all dims) or lists (per dimension)
         """
-
-        str_dist = str(dist)
         if seed is not None:
-            i_seed = int(seed)
-            np.random.seed(i_seed)
+            np.random.seed(seed)
 
-        obj_dist = getattr(stats.distributions, str_dist)  # Get distribution object with the same name as 'dist'
-
-        params = {'size': int(num_points)}
-
-        if num_dim is not None:
-            i_num_dim = num_dim
+        # Determine number of dimensions
+        if box is not None and num_dim is not None:
+            raise ValueError("Provide either 'box' or 'num_dim', not both")
         elif box is not None:
-            i_num_dim = len(box)
+            num_dimensions = len(box)
+        elif num_dim is not None:
+            num_dimensions = int(num_dim)
+            box = None  # No bounds when using num_dim
         else:
-            raise ValueError("Must give at least one of 'num_dim' or 'box'")
+            raise ValueError("Must provide either 'box' or 'num_dim'")
 
-        if loc is not None:
-            ls_loc = loc
-            if len(ls_loc) != i_num_dim:
-                raise ValueError("Parameter 'loc' has incorrect length."
-                                 "Expected length {}"
-                                 "Got length {}".format(i_num_dim, len(ls_loc)))
+        # Get distribution from scipy.stats
+        try:
+            distribution = getattr(stats, dist)
+        except AttributeError:
+            raise ValueError(f"Distribution '{dist}' not found in scipy.stats")
 
-        if scale is not None:
-            ls_scale = scale
-            if len(ls_scale) != i_num_dim:
-                raise ValueError("Parameter 'scale' has incorrect length."
-                                 "Expected length {}"
-                                 "Got length {}".format(i_num_dim, len(ls_scale)))
+        points = []
 
-        if df is not None:
-            ls_df = df
-            if len(ls_df) != i_num_dim:
-                raise ValueError("Parameter 'df' has incorrect length."
-                                 "Expected length {}"
-                                 "Got length {}".format(i_num_dim, len(ls_df)))
+        for i in range(num_dimensions):
+            # Extract parameters for this dimension
+            dim_params = {}
+            for param_name, param_value in dist_params.items():
+                if isinstance(param_value, (list, tuple, np.ndarray)):
+                    if len(param_value) != num_dimensions:
+                        raise ValueError(f"Parameter '{param_name}' length must match dimensions")
+                    dim_params[param_name] = param_value[i]
+                else:
+                    # Scalar value - use same for all dimensions
+                    dim_params[param_name] = param_value
 
-        if s is not None:
-            ls_s = s
-            if len(ls_s) != i_num_dim:
-                raise ValueError("Parameter 's' has incorrect length."
-                                 "Expected length {}"
-                                 "Got length {}".format(i_num_dim, len(ls_s)))
+            # Handle automatic box fitting for common distributions
+            if box is not None:
+                low, high = box[i]
+                dim_params = _auto_fit_to_box(dist, low, high, dim_params)
 
-        ls_points = []
-        for i in range(i_num_dim):
-            # loc, scale, df, and s are the main parameters used in scipy's continuous distributions
-            if loc:
-                params['loc'] = ls_loc[i]
+            # Generate samples for this dimension
+            samples = distribution.rvs(size=num_points, **dim_params)
 
-            if scale:
-                params['scale'] = ls_scale[i]
+            # Clip to box bounds if provided
+            if box is not None:
+                low, high = box[i]
+                samples = np.clip(samples, low, high)
 
-            if df:
-                params['df'] = ls_df[i]
+            points.append(samples)
 
-            if s:
-                params['s'] = ls_s[i]
-
-            ls_points.append(obj_dist.rvs(**params))
-
-        return np.array(ls_points).T
+        return np.array(points).T
 
 
 class MultiNormalSampler(ContinuousSampler):
