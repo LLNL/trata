@@ -1,10 +1,33 @@
 # Release Notes
 
+* [1.2.0](#120-release)
 * [1.1.1](#111-release)
 * [1.1.0](#110-release)
 * [1.0.3](#103-release)
 * [1.0.2](#102-release)
 * [1.0.1](#101-release)
+
+## 1.2.0 Release
+
+### Description
+
+### Added
+
+* BestCandidateSampler: A new option in `trata.adaptive_sampler` that chooses new samples that add most to diversity of existing samples.
+* All adaptive samples can be passed a random seed for reproducability.
+* The sampling documentation notebook has been updated to include `adaptive_sampler` examples.
+* The `ProbabilityDensityFunctionSampler` will automatically scale values based on ranges passed with the "box" parameter.
+
+### Changed
+
+* Adaptive samplers use the same variable names as the rest of the modules. Only "values" for the inputs/X, and "output" for response/Y.
+
+### Bug fixes
+
+* Updated some indexing and variable assignment methods to be compatible with numpy > 2.0
+* One-at-a-time sampler has input validation and avoids duplicating default values.
+* Other fixes and updates to the testing suite
+
 
 ## 1.1.1 Release
 
