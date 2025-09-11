@@ -35,7 +35,8 @@ def test_KoshSampler():
     h5f.close()
 
     # Create a new store (erase if exists)
-    store = kosh.connect("kosh_test.sql", delete_all_contents=True)
+    store_name = str(res) + 'store.sql'
+    store = kosh.connect(store_name, delete_all_contents=True)
     dataset = store.create("kosh_example1")
     dataset.associate([fileName], "hdf5")
 
@@ -86,4 +87,5 @@ def test_KoshSampler():
 
     # Cleanup
     os.remove(fileName)
+    os.remove(store_name)
     store.close()
