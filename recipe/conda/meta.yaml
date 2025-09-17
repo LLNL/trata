@@ -37,7 +37,7 @@ about:
     home:  https://github.com/LLNL/trata
     summary: 
     license: BSD 3-Clause
-    license_file: LICENSE
+    license_files: LICENSE
 
 extra:
   maintainers:

@@ -33,12 +33,13 @@ scikit-learn = "*"
 scipy = "*"
 matplotlib = "*"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 sphinx_rtd_theme = "*"
 sphinx = "*"
 pytest = "*"
 nbconvert = "*"
 sphinx-autoapi = "*"
+
 nbsphinx = "*"
 six = "*"
 
