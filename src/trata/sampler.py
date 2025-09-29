@@ -1421,7 +1421,7 @@ class FractionalFactorialSampler(ContinuousSampler, DiscreteOrderedSampler):
     name = "Fractional Factorial"
 
     @staticmethod
-    def sample_points(box=None, values=None, resolution=None, fraction=None, **kwargs):
+    def sample_points(box=None, values=None, resolution=None, fraction=None, seed=None, **kwargs):
         """
 
         Creates a set of points based on a fractional factorial design
@@ -1447,6 +1447,8 @@ class FractionalFactorialSampler(ContinuousSampler, DiscreteOrderedSampler):
         Raises:
             - ValueError
         """
+        if seed is not None:
+            np.random.seed(seed)
 
         ls_box = DiscreteOrderedSampler.normalize_box(box, values)
         i_num_dim = len(ls_box)
