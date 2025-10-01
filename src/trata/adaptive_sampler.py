@@ -83,7 +83,9 @@ class WeightedSampler(AdaptiveSampler):
         elif 'num_cand_points' in kwargs and kwargs['num_cand_points'] is not None:
             i_num_candidates = int(kwargs['num_cand_points'])
             ls_box = kwargs['box']
-            np_candidate_points = sampler.LatinHyperCubeSampler.sample_points(num_points=i_num_candidates, box=ls_box)
+            np_candidate_points = sampler.LatinHyperCubeSampler.sample_points(num_points=i_num_candidates,
+                                                                              box=ls_box,
+                                                                              seed=seed)
             kwargs['cand_points'] = np_candidate_points
         else:
             raise TypeError("Neither 'cand_points' nor 'num_cand_points' was given")
@@ -132,7 +134,8 @@ class ActiveLearningSampler(ScoredSampler):
                                                                                  model=model,
                                                                                  num_cand_points=num_cand_points,
                                                                                  box=box,
-                                                                                 cand_points=cand_points)
+                                                                                 cand_points=cand_points,
+                                                                                 seed=seed)
 
     @staticmethod
     def _get_score(**kwargs):
