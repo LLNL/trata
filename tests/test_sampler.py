@@ -205,66 +205,172 @@ def test_MonteCarloSampler_invalid():
                       num_points=10)
 
 def test_QuasiRandomNumberSampler_valid():
+    """Test basic Sobol and Halton sampling"""
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
-    np_actual_values_sobol = trata.sampler.QuasiRandomNumberSampler.sample_points(box=ls_test_box,
-                                                                                             num_points=3,
-                                                                                             technique='Sobol')
-    ls_expected_values_sobol = [[12.50, -12.50, 0.0],
-                                [18.75, -18.75, 12.5],
-                                [6.25, -6.25, -12.5]]
-    np.testing.assert_array_equal(np_actual_values_sobol, ls_expected_values_sobol)
-    np_actual_values_sobol = trata.sampler.QuasiRandomNumberSampler.sample_points(box=ls_test_box,
-                                                                                             num_points=3,
-                                                                                             technique='Halton')
-    ls_expected_values_halton = [[6.250, -8.33333333, -5.],
-                                 [18.750, -22.22222222, 5.],
-                                 [3.125, -13.88888889, 15.]]
-    np.testing.assert_array_almost_equal(np_actual_values_sobol, ls_expected_values_halton)
+    
+    # Test Sobol
+    np_actual_values_sobol = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=3,
+        technique='Sobol'
+    )
+    
+    # NOTE: Expected values changed because scipy uses different direction numbers
+    # These are the new expected values from scipy's Sobol implementation
+    ls_expected_values_sobol = [[0.0, -25.0, -25.0],
+                                [12.5, -12.5, 0.0],
+                                [18.75, -18.75, -12.5]]
+    np.testing.assert_array_almost_equal(np_actual_values_sobol, ls_expected_values_sobol, decimal=5)
+    
+    # Test Halton
+    np_actual_values_halton = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=3,
+        technique='Halton'
+    )
+    
+    # NOTE: Expected values changed because scipy's Halton implementation differs
+    ls_expected_values_halton = [[0.0, -25.0, -25.0],
+                                 [12.5, -16.666666666666668, -15.0],
+                                 [6.25, -8.333333333333336, -5.0]]
+    np.testing.assert_array_almost_equal(np_actual_values_halton, ls_expected_values_halton, decimal=5)
+
+
+def test_QuasiRandomNumberSampler_sequence_offset():
+    """Test that sequence_offset allows continuing sequences"""
+    ls_test_box = [[0.0, 1.0], [0.0, 1.0]]
+    
+    # Generate 10 points at once
+    all_at_once = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=10,
+        technique='sobol'
+    )
+    
+    # Generate same 10 points in two batches
+    batch1 = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=5,
+        technique='sobol',
+        sequence_offset=0
+    )
+    
+    batch2 = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=5,
+        technique='sobol',
+        sequence_offset=5
+    )
+    
+    # First 5 points should match
+    np.testing.assert_array_almost_equal(all_at_once[:5], batch1)
+    # Last 5 points should match
+    np.testing.assert_array_almost_equal(all_at_once[5:], batch2)
+
+
+def test_QuasiRandomNumberSampler_scramble_seed():
+    """Test that scrambling with seed gives reproducible results"""
+    ls_test_box = [[0.0, 1.0], [0.0, 1.0]]
+    
+    # Generate with scramble and seed
+    points1 = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=10,
+        technique='sobol',
+        scramble=True,
+        seed=42
+    )
+    
+    # Generate again with same seed
+    points2 = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=10,
+        technique='sobol',
+        scramble=True,
+        seed=42
+    )
+    
+    # Should be identical
+    np.testing.assert_array_equal(points1, points2)
+    
+    # Generate with different seed
+    points3 = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=10,
+        technique='sobol',
+        scramble=True,
+        seed=99
+    )
+    
+    # Should be different
+    assert not np.array_equal(points1, points3)
+
+
+def test_QuasiRandomNumberSampler_no_scramble_deterministic():
+    """Test that without scrambling, results are deterministic"""
+    ls_test_box = [[0.0, 1.0], [0.0, 1.0]]
+    
+    points1 = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=10,
+        technique='sobol',
+        scramble=False
+    )
+    
+    points2 = trata.sampler.QuasiRandomNumberSampler.sample_points(
+        box=ls_test_box,
+        num_points=10,
+        technique='sobol',
+        scramble=False
+    )
+    
+    # Should be identical (no randomness)
+    np.testing.assert_array_equal(points1, points2)
+
 
 def test_QuasiRandomNumberSampler_invalid():
-    # nPts not given
+    """Test error handling for invalid inputs"""
+    # num_points not given
     pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=[[0.0, 1.0], [0.0, 1.0]])
+                  box=[[0.0, 1.0], [0.0, 1.0]])
+    
     # box not given
     pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      num_points=10)
-    # nPts nor box not given
+                  num_points=10)
+    
+    # neither num_points nor box given
     pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points)
-
+    
     # not enough dimensions in box
     pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=[0.0, 1.0],
-                      num_points=10)
-
-    # too many dimensions in nPts
+                  box=[0.0, 1.0],
+                  num_points=10)
+    
+    # too many dimensions in num_points
     pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=[[0.0, 1.0], [0.0, 1.0]],
-                      num_points=[1, 2])
-    # nPts type str
+                  box=[[0.0, 1.0], [0.0, 1.0]],
+                  num_points=[1, 2])
+    
+    # num_points type str
     pytest.raises(ValueError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=[[0.0, 1.0], [0.0, 1.0]],
-                      num_points='f')
+                  box=[[0.0, 1.0], [0.0, 1.0]],
+                  num_points='f')
+    
     # box not list
     pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=1.0,
-                      num_points=10)
-
+                  box=1.0,
+                  num_points=10)
+    
     # too many dimensions in box
     pytest.raises(TypeError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
-                      num_points=10)
+                  box=[[[0.0, 1.0], [0.0, 1.0]], [[0.0, 1.0], [0.0, 1.0]]],
+                  num_points=10)
+    
     # invalid sequence type
     pytest.raises(ValueError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=[[0.0, 1.0], [0.0, 1.0]],
-                      num_points=10,
-                      technique='foobar')
-
-    # at_most type str
-    pytest.raises(ValueError, trata.sampler.QuasiRandomNumberSampler.sample_points,
-                      box=[[0.0, 1.0], [0.0, 1.0]],
-                      num_points=10,
-                      technique='halton',
-                      at_most='b')
+                  box=[[0.0, 1.0], [0.0, 1.0]],
+                  num_points=10,
+                  technique='foobar')
 
 def test_CenteredSampler_valid():
     ls_test_box = [[0.0, 25.0], [-25.0, 0.0], [-25.0, 25.0]]
