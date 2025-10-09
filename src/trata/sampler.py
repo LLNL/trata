@@ -8,7 +8,7 @@ import itertools
 import math
 import os
 from copy import deepcopy
-
+import warnings
 import numpy as np
 
 try:
@@ -254,281 +254,83 @@ class MonteCarloSampler(ContinuousSampler):
 
 
 class QuasiRandomNumberSampler(ContinuousSampler):
-    """A sampler for creating quasi-random sample sets."""
-
-    class Prime(object):
-        def __init__(self):
-            self._dt = {0: 2, 1: 3}
-            self._max = 1
-            self._i = 0
-
-        def __getitem__(self, n):
-            if isinstance(n, slice):
-                return itertools.islice(self, n.start, n.stop, n.step)
-            elif isinstance(n, int):
-                if n < 0:
-                    raise KeyError(n)
-                if n in self._dt:
-                    return self._dt[n]
-                else:
-                    if n - self._max > 100:
-                        for i in range(self._max, n, 50):
-                            _ = self[i]
-
-                    for k in itertools.count(self[n - 1] + 2, 2):
-                        if k in self:
-                            if n > self._max:
-                                self._max = n
-                            self._dt[n] = k
-                            break
-
-                return self._dt[n]
-            else:
-                raise KeyError(n)
-
-        def __setitem__(self, key, value):
-            pass
-
-        def __contains__(self, item):
-            if isinstance(item, int):
-                if item < 2:
-                    return False
-                tmp_i = self._i
-                for prime in self:
-                    if prime > math.sqrt(item):
-                        self._i = tmp_i
-                        return True
-                    if item % prime == 0:
-                        self._i = tmp_i
-                        return False
-            else:
-                return False
-
-        def __iter__(self):
-            self._i = 0
-            return self
-
-        def __next__(self):
-            val = self[self._i]
-            self._i += 1
-            return val
-
-        def next(self):
-            return self.__next__()
-
-    class HaltonSequence:
-        """A generator class for getting numbers in a halton sequence"""
-
-        def __init__(self, i_dim, i_at_most=10000):
-            obj_prime = QuasiRandomNumberSampler.Prime()
-            self.i_dim = i_dim
-
-            self.f_err = 0.9 / (i_at_most * float(obj_prime[i_dim - 1]))
-
-            self.ls_prime_inverse = [0] * self.i_dim
-            self.ls_quasi = [0] * self.i_dim
-            for i in range(self.i_dim):
-                self.ls_prime_inverse[i] = 1. / float(obj_prime[i])
-                self.ls_quasi[i] = self.ls_prime_inverse[i]
-            del obj_prime
-
-        def __call__(self):
-            for i in range(self.i_dim):
-                f_t = self.ls_prime_inverse[i]
-                f_f = 1. - self.ls_quasi[i]
-                f_g = 1.
-                f_h = f_t
-                while f_f - f_h < self.f_err:
-                    f_g = f_h
-                    f_h = f_h * f_t
-                self.ls_quasi[i] = f_g + f_h - f_f
-            return self.ls_quasi
-
-    class SobolSequence:
-        """A generator class for getting numbers in a sobol sequence"""
-
-        def __init__(self, i_dim):
-            self.i_max_dim = 40
-            self.i_bit_count = 30
-            self.ls_primitive_polynomial = [
-                1, 3, 7, 11, 13, 19, 25, 37, 59, 47,
-                61, 55, 41, 67, 97, 91, 109, 103, 115, 131,
-                193, 137, 145, 143, 241, 157, 185, 167, 229, 171,
-                213, 191, 253, 203, 211, 239, 247, 285, 369, 299]
-            self.ls_degree_table = [
-                0, 1, 2, 3, 3, 4, 4, 5, 5, 5,
-                5, 5, 5, 6, 6, 6, 6, 6, 6, 7,
-                7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-                7, 7, 7, 7, 7, 7, 7, 8, 8, 8]
-            self.ls_v_init = [
-                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [0, 0, 1, 3, 1, 3, 1, 3, 3, 1,
-                 3, 1, 3, 1, 3, 1, 1, 3, 1, 3,
-                 1, 3, 1, 3, 3, 1, 3, 1, 3, 1,
-                 3, 1, 1, 3, 1, 3, 1, 3, 1, 3],
-                [0, 0, 0, 7, 5, 1, 3, 3, 7, 5,
-                 5, 7, 7, 1, 3, 3, 7, 5, 1, 1,
-                 5, 3, 3, 1, 7, 5, 1, 3, 3, 7,
-                 5, 1, 1, 5, 7, 7, 5, 1, 3, 3],
-                [0, 0, 0, 0, 0, 1, 7, 9, 13, 11,
-                 1, 3, 7, 8, 5, 13, 13, 11, 3, 15,
-                 5, 3, 15, 7, 9, 13, 9, 1, 11, 7,
-                 5, 15, 1, 15, 11, 5, 3, 1, 7, 9],
-                [0, 0, 0, 0, 0, 0, 0, 9, 3, 27,
-                 15, 29, 21, 23, 19, 11, 25, 7, 13, 17,
-                 1, 25, 29, 3, 31, 11, 5, 23, 27, 19,
-                 21, 5, 1, 17, 13, 7, 15, 9, 31, 9],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 37, 33, 7, 5, 11, 39, 63,
-                 27, 17, 15, 23, 29, 3, 21, 13, 31, 25,
-                 9, 49, 33, 19, 29, 11, 19, 27, 15, 25],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 13,
-                 33, 115, 41, 79, 17, 29, 119, 75, 73, 105,
-                 7, 59, 65, 21, 3, 113, 61, 89, 45, 107],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 7, 23, 39]]
-
-            self.i_dim = i_dim
-
-            # !!!THIS CODE DOES NOT WORK!!!
-            # self.v_direction = [[0] * self.max_dim] * self.bit_count
-            # The outer list creation only creates pointers to one single inner list, not new lists
-
-            self.ls_v_direction = []
-            for i in range(self.i_bit_count):
-                ls_array = []
-                for j in range(self.i_max_dim):
-                    ls_array.append(0)
-                self.ls_v_direction.append(ls_array)
-
-            # Initialize direction table in dimension 0
-            for i in range(self.i_bit_count):
-                self.ls_v_direction[i][0] = 1
-
-            # Initialize in remaining dimensions
-            for i_dim in range(1, self.i_dim):
-                i_poly_index = i_dim
-                i_degree_i = self.ls_degree_table[i_poly_index]
-                ls_include = [0] * 8
-
-                # Expand the polynomial bit pattern to separate
-                # components of the logical array include[]
-                i_poly_i = self.ls_primitive_polynomial[i_poly_index]
-                for k in range(i_degree_i - 1, -1, -1):
-                    ls_include[k] = ((i_poly_i % 2) == 1)
-                    i_poly_i /= 2
-
-                # Leading elements for dimension i come from v_init[][]
-                for j in range(i_degree_i):
-                    self.ls_v_direction[j][i_dim] = self.ls_v_init[j][i_dim]
-
-                # Calculate remaining elements for this dimension,
-                # as explained in Bratly+Fox, section 2
-                for j in range(i_degree_i, self.i_bit_count):
-                    i_new_v = self.ls_v_direction[j - i_degree_i][i_dim]
-                    i_ell = 1
-                    for k in range(i_degree_i):
-                        i_ell *= 2
-                        if ls_include[k]:
-                            i_new_v = i_new_v ^ (i_ell * self.ls_v_direction[j - k - 1][i_dim])
-                    self.ls_v_direction[j][i_dim] = i_new_v
-
-            # Multiply columns of v by appropriate power of 2
-            i_ell = 1
-            for j in range(self.i_bit_count - 2, -1, -1):
-                i_ell *= 2
-                for i_dim in range(self.i_dim):
-                    self.ls_v_direction[j][i_dim] = self.ls_v_direction[j][i_dim] * i_ell
-
-            # 1/(common denominator of the elements in v_direction)
-            self.f_last_denominator_inv = 1.0 / (2.0 * i_ell)
-
-            # final setup
-            self.i_sequence_count = 0
-            self.ls_last_numerator_vec = [0] * self.i_dim
-            return
-
-        def __call__(self):
-            i_ell = 0
-            i_count = self.i_sequence_count
-            while 1:
-                i_ell += 1
-                if i_count % 2 == 1:
-                    i_count //= 2
-                else:
-                    break
-            if i_ell > self.i_bit_count:
-                raise RuntimeError("Sobol Failed for {}".format(self.i_sequence_count))
-
-            ls_v = [0] * self.i_dim
-            for i_dimension in range(self.i_dim):
-                i_direction_i = self.ls_v_direction[i_ell - 1][i_dimension]
-                i_old_numerator_i = self.ls_last_numerator_vec[i_dimension]
-                i_new_numerator_i = i_old_numerator_i ^ i_direction_i
-                self.ls_last_numerator_vec[i_dimension] = i_new_numerator_i
-                ls_v[i_dimension] = i_new_numerator_i * self.f_last_denominator_inv
-            self.i_sequence_count += 1
-            return ls_v
+    """A sampler for creating quasi-random sample sets using scipy.stats.qmc."""
 
     name = "Quasi Random Number"
 
     @staticmethod
-    def sample_points(num_points, box, technique='sobol', at_most=None, **kwargs):
+    def sample_points(num_points, box, technique='sobol', sequence_offset=0, scramble=False, seed=None, **kwargs):
         """
         Create a set of points using quasi-random numbers
 
         Produces a quasi-random set of points that tends to evenly cover space. The sampler will always produce
-        the same sequence given the same inputs.
+        the same sequence given the same inputs (unless scrambling is enabled).
+
+        Note: Sobol sequences have optimal properties when num_points is a power of 2 (e.g., 64, 128, 256, 512).
 
         Args:
             - num_points (int): the number of sample points
             - box ([[float]]): The bounding box
-            - technique (string): Which type of sequence to use; either Sobol or Halton. Sobol is the default.
-            - at_most (int): A parameter for Halton Sequences
+            - technique (string): Which type of sequence to use; either 'sobol' or 'halton'. Sobol is the default.
+            - sequence_offset (int): Starting position in the sequence (default: 0)
+                Use this to continue a sequence across multiple calls
+            - scramble (bool): Whether to scramble the sequence for better randomization (default: False)
+            - seed (int): Random seed for reproducibility when scrambling (default: None)
 
         Returns (numpy array):
             - A two dimensional numpy array of sample points
 
         Raises:
-            - ValueError
-            - TypeError
-            - RuntimeError: If a Sobol sequence fails
+            - ValueError: If technique is not 'sobol' or 'halton'
         """
+        from scipy.stats import qmc
 
-        technique = str(technique)
-        if technique.lower() in ['sobol', 'halton']:
-            str_type = technique.lower()
-        else:
-            raise ValueError("Value given for 'technique' is invalid: {}".format(technique))
+        technique = str(technique).lower()
+
+        if technique not in ['sobol', 'halton']:
+            raise ValueError(f"Value given for 'technique' is invalid: {technique}. Must be 'sobol' or 'halton'")
+
+        # Validate box format
+        if not isinstance(box, (list, np.ndarray)):
+            raise TypeError("'box' must be a list or array")
+
+        # Check if box is 2D (list of lists)
+        try:
+            box_array = np.array(box)
+            if box_array.ndim != 2:
+                raise TypeError("'box' must be a 2D array-like structure (list of [min, max] pairs)")
+            if box_array.shape[1] != 2:
+                raise TypeError("Each dimension in 'box' must have exactly 2 values [min, max]")
+        except (ValueError, IndexError) as e:
+            raise TypeError("'box' must be a 2D array-like structure (list of [min, max] pairs)") from e
 
         ls_box = box
         i_num_points = int(num_points)
+        n_dim = len(ls_box)
 
-        # The objects 'SobolSequnce' or 'HaltonSequence' act as generators with a '__call__' method
-        # This means that we can call the object as if it were a function.
-        # Multiple calls to the same object will produce a new point in the sequence at each call.
-        if str_type == 'sobol':
-            obj_number_generator = QuasiRandomNumberSampler.SobolSequence(len(ls_box))
-        elif str_type == 'halton':
-            if at_most is not None:
-                obj_number_generator = QuasiRandomNumberSampler.HaltonSequence(len(ls_box),
-                                                                               i_at_most=int(at_most))
-            else:
-                obj_number_generator = QuasiRandomNumberSampler.HaltonSequence(len(ls_box))
-        else:
-            raise Exception("Value for 'str_type' must be 'sobol' or 'halton'. Got value '{}'.".format(str_type))
+        # Create the appropriate sampler
+        if technique == 'sobol':
+            sampler = qmc.Sobol(d=n_dim, scramble=scramble, seed=seed)
+        else:  # technique == 'halton'
+            sampler = qmc.Halton(d=n_dim, scramble=scramble, seed=seed)
 
-        # Use list comprehension to create list of points scaled to box size
-        ls_points = [[c * (ls_box[i][1] - ls_box[i][0]) + ls_box[i][0]
-                      for i, c in enumerate(obj_number_generator())]
-                     for _ in range(i_num_points)]
-        return np.array(ls_points)
+        # Fast forward to the desired position in the sequence
+        if sequence_offset > 0:
+            sampler.fast_forward(sequence_offset)
+
+        # Generate points in [0, 1)^d
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', message="The balance properties of Sobol")
+            points_unit = sampler.random(i_num_points)
+
+        # Convert box to numpy array and slice
+        box_array = np.array(ls_box)
+        l_bounds = box_array[:, 0]  # First column: lower bounds
+        u_bounds = box_array[:, 1]  # Second column: upper bounds
+
+        points_scaled = qmc.scale(points_unit, l_bounds, u_bounds)
+
+        return points_scaled
 
 
 class CenteredSampler(ContinuousSampler):
