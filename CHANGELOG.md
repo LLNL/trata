@@ -1,11 +1,27 @@
 # Release Notes
 
+* [1.2.1](#121-release)
 * [1.2.0](#120-release)
 * [1.1.1](#111-release)
 * [1.1.0](#110-release)
 * [1.0.3](#103-release)
 * [1.0.2](#102-release)
 * [1.0.1](#101-release)
+
+
+## 1.2.1 Release
+
+### Description
+
+### Changed
+
+The `QuasiRandomNumberSampler` has been updated to use scipy's implementation for Sobol and Halton sequences.
+
+Benefits include:
+ * Continue the sequence from a certain point with the `sequence_offset` option.
+ * A `scramble` option for better randomization
+ * The directional numbers for generating a Sobol sequence are updated to allow for higher dimensions. [Joe and Kuo 2008](https://epubs.siam.org/doi/10.1137/070709359) This gives different but still valid results compared to the previous version.
+
 
 ## 1.2.0 Release
 
